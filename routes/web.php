@@ -93,10 +93,6 @@ Route::group(['middleware' => 'language'], function () {
         // User/Torrent Report
         Route::any('/report', 'ReportController@postReport')->name('postReport');
 
-        // Bug Report
-        Route::get('/bug', 'BugController@bug')->name('bug');
-        Route::post('/bug', 'BugController@bug')->name('bug');
-
         // Category
         Route::get('/categories', 'CategoryController@categories')->name('categories');
         Route::get('/categories/{slug}.{id}', 'CategoryController@category')->name('category');
@@ -417,9 +413,6 @@ Route::group(['middleware' => 'language'], function () {
         Route::any('/articles/new', 'ArticleController@add')->name('staff_article_add');
         Route::any('/articles/edit/{slug}.{id}', 'ArticleController@edit')->name('staff_article_edit');
         Route::any('/articles/delete/{slug}.{id}', 'ArticleController@delete')->name('staff_article_delete');
-
-        // Bugs
-        Route::any('/bug', 'BugController@index')->name('staff_bug_index');
 
         // Blocks
         Route::any('/blocks', 'BlockController@index')->name('staff_blocks_index');
