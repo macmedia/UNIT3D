@@ -12,13 +12,6 @@
 
 namespace App;
 
-use App\Ban;
-use App\Warning;
-use App\Peer;
-use App\History;
-
-use Cache;
-
 use Gstt\Achievements\Achiever;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Notifications\Notifiable;
@@ -26,6 +19,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use function theodorejb\polycast\to_int;
 use App\Helpers\StringHelper;
 use App\Helpers\Bbcode;
+use App\Ban;
+use App\Warning;
+use App\Peer;
+use App\History;
+use Cache;
 
 /**
  * User-Related Template
@@ -61,12 +59,21 @@ class User extends Authenticatable
     protected $dates = ['last_login'];
 
     /**
+     * Has many tickets
+     *
+     */
+    public function tickets()
+    {
+        return $this->hasMany(\App\Ticket::class);
+    }
+
+    /**
      * Thanks Given
      *
      */
     public function thanksGiven()
     {
-        return $this->hasMany(Thank::class, 'user_id', 'id');
+        return $this->hasMany(\App\Thank::class, 'user_id', 'id');
     }
 
     /**
@@ -75,7 +82,7 @@ class User extends Authenticatable
      */
     public function thanksReceived()
     {
-        return $this->hasManyThrough(Thank::class, Torrent::class);
+        return $this->hasManyThrough(\App\Thank::class, \App\Torrent::class);
     }
 
     /**

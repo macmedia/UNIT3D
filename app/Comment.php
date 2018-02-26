@@ -46,6 +46,15 @@ class Comment extends Model
     }
 
     /**
+     * Belongs to Ticket
+     *
+     */
+    public function ticket()
+    {
+        return $this->belongsTo(\App\Ticket::class);
+    }
+
+    /**
      * Belongs to User
      *
      */
