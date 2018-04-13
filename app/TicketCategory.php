@@ -22,6 +22,6 @@ class TicketCategory extends Model
 
     public function tickets()
     {
-        return $this->hasMany(\App\Ticket::class);
+        return $this->hasMany(\App\Ticket::class, "category_id", "id");
     }
 }
