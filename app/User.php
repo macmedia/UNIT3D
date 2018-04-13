@@ -24,11 +24,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use function theodorejb\polycast\to_int;
 use App\Helpers\StringHelper;
 use App\Helpers\Bbcode;
-use App\Ban;
-use App\Warning;
-use App\Peer;
-use App\History;
-use Cache;
 
 /**
  * User-Related Template

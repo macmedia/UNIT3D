@@ -43,14 +43,10 @@ class TicketCreated extends Mailable
      */
     public function build()
     {
-<<<<<<< HEAD:app/Mail/TicketCreated.php
         return $this->view('mail.ticket_info')
                     ->with([
                         'ticket' => $this->ticket,
                         'user'   => $this->user,
                     ]);
-=======
-        return $this->markdown('emails.bug')->subject('New Bug Report!');
->>>>>>> master:app/Mail/Bug.php
     }
 }
