@@ -257,6 +257,12 @@ Route::group(['middleware' => 'language'], function () {
         Route::any('/notification/massread', 'NotificationController@massRead')->name('massRead_notifications');
         Route::any('/notification/delete/{id}', 'NotificationController@delete')->name('delete_notification');
         Route::any('/notification/delete', 'NotificationController@deleteAll')->name('delete_notifications');
+
+        // Ticket/Helpdesk
+        Route::get('/tickets/new', 'TicketController@create');
+        Route::post('/tickets/new', 'TicketController@store');
+        Route::get('/tickets', 'TicketController@userTickets')->middleware('modo');
+        Route::get('/tickets/{ticket_id}', 'TicketController@show');
     });
 
 /*
@@ -453,5 +459,13 @@ Route::group(['middleware' => 'language'], function () {
         Route::post('/backup/create', 'BackupController@create');
         Route::get('/backup/download/{file_name?}', 'BackupController@download');
         Route::post('/backup/delete/{file_name?}', 'BackupController@delete')->where('file_name', '(.*)');
+
+        // Ticket/Helpdesk
+        Route::get('/tickets', 'TicketController@index');
+        Route::get('/tickets/{status?}', 'TicketController@tickets');
+        Route::post('/change_status/{ticket_id}', 'TicketController@changeStatus');
+        Route::get('/tickets/categories', 'TicketCategoryController@show');
+        Route::post('/tickets/categories', 'TicketCategoryController@add');
+        Route::delete('/tickets/category/{category_id}', 'TicketCategoryController@delete');
     });
 });
