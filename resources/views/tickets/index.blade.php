@@ -58,7 +58,7 @@
                                     </td>
                                     @if(Auth::user()->group->is_modo)
                                     <td>
-                                        <form action="{{ url('admin/change_status/' . $ticket->ticket_id) }}" method="POST">
+                                        <form action="{{ url('staff_dashboard/change_status/' . $ticket->ticket_id) }}" method="POST">
                                             {{ csrf_field() }}
                                             @if ($ticket->status == 'Open')
                                             <button type="submit" class="btn btn-danger">Close</button>

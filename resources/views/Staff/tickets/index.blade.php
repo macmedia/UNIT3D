@@ -2,30 +2,14 @@
 
 @section('content')
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<style>
-a:link{
-color:black;
-}
-a:visited{
-color:black;
-}
-a:hover{
-color:black;
-}
-a:focus{
-color:black;
-}
-a:active{
-color:black;
-}
-</style>
+
     @if($tickets_count)
         <div class="row">
-            <div class="col-lg-3 col-md-5 col-lg-offset-1">
+            <div class="col-md-2 col-md-offset-3">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                          <a href="{{ url('admin/tickets') }}">
+                          <a href="{{ url('staff_dashboard/tickets') }}">
                             <div class="col-xs-3" style="font-size: 5em;">
                                 <i class="fa fa-ticket"></i>
                             </div>
@@ -38,15 +22,15 @@ color:black;
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-4">
-                <div class="panel panel-danger">
+            <div class="col-md-2">
+                <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                          <a href="{{ url('admin/tickets/open') }}">
+                          <a href="{{ url('staff_dashboard/tickets/open') }}">
                             <div class="col-xs-3" style="font-size: 5em;">
-                                <i class="fa fa-times-circle"></i>
+                                <i class="fa fa-times-circle text-red"></i>
                             </div>
-                            <div class="col-xs-9 text-right">
+                            <div class="col-xs-9 text-right text-red">
                                 <h1>{{ $open_tickets_count }}</h1>
                                 <div>Open tickets</div>
                             </div>
@@ -55,15 +39,15 @@ color:black;
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="panel panel-success">
+            <div class="col-md-2">
+                <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                          <a href="{{ url('admin/tickets/closed') }}">
+                          <a href="{{ url('staff_dashboard/tickets/closed') }}">
                             <div class="col-xs-3" style="font-size: 5em;">
-                                <i class="fa fa-check"></i>
+                                <i class="fa fa-check text-green"></i>
                             </div>
-                            <div class="col-xs-9 text-right">
+                            <div class="col-xs-9 text-right text-green">
                                 <h1>{{ $closed_tickets_count }}</h1>
                                 <span>Closed tickets</span>
                             </div>
@@ -75,19 +59,15 @@ color:black;
         </div>
 
         <div class="row">
-            <div class="col">
-                    {{-- <div class="col-md-6"> --}}
-                        <div class="panel panel-default">
-                            <div class="panel-heading text-center">
-                                Tickets per category
-                            </div>
-                            <div class="panel-body">
-                                <div id="catpiechart" style="width: auto; height: 350;"></div>
-                            </div>
-                        </div>
-                    {{-- </div> --}}
+            <div class="container">
+                <div class="block">
+                    <h1 class="title h2">Tickets per category</h1>
+                        <center><div id="catpiechart" style="width: auto; height: 350;"></div></center>
+                </div>
             </div>
-          </div>
+         </div>
+         <div class="container">
+             <div class="block">
           <div class="row">
             <div class="col-md-12">
                 {{--<h4><i class="glyphicon glyphicon-info-sign"></i> Tickets Activities</h4>--}}
@@ -150,7 +130,7 @@ color:black;
                         @foreach($users as $user)
                             <a href="#" class="list-group-item">
                                 <span>
-                                    {{ $user->name }}
+                                    {{ $user->username }}
                                     <span class="badge">
                                         {{ $user->tickets->where('status', 'Open')->count()  +
                                          $user->tickets->where('status', 'Closed')->count() }}
@@ -169,9 +149,13 @@ color:black;
                 </div>
             </div>
         </div>
+    </div>
+ </div>
     @else
-        <div class="well text-center">
-            Nothing here!
+        <div class="container">
+            <div class="block">
+                Nothing here!
+            </div>
         </div>
     @endif
     @if($tickets_count)
