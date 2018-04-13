@@ -12,15 +12,12 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Command;
 use App\PrivateMessage;
 use App\User;
 use App\Group;
 use App\History;
 use Carbon\Carbon;
-
-use Illuminate\Support\Facades\Config;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class autoGroup extends Command
 {
@@ -47,11 +44,11 @@ class autoGroup extends Command
     {
         // Temp Hard Coding of Immune Groups (Config Files To Come)
         $current = Carbon::now();
-        $groups = Group::select('id')->where('autogroup', '=', 1)->get()->toArray();
+        $groups = Group::select('id')->where('autogroup', 1)->get()->toArray();
         $users = User::whereIn('group_id', $groups)->get();
 
         foreach ($users as $user) {
-            $hiscount = History::where('user_id', '=', $user->id)->count();
+            $hiscount = History::where('user_id', $user->id)->count();
 
             // Temp Hard Coding of Group Requirements (Config Files To Come) (Upload in Bytes!) (Seedtime in Seconds!)
 

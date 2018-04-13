@@ -6,12 +6,12 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('common.close') }}"><span aria-hidden="true">&times;</span></button>
 				<h2><i class="fa fa-thumbs-up"></i> {{ trans('request.vote-that') }}!</h2>
 			</div>
-			{{ Form::open(['route' => ['add_votes', 'id' => $request->id], 'method' => 'post', 'role' => 'form']) }}
+			<form role="form" method="POST" action="{{ route('add_votes',['id' => $torrentRequest->id]) }}">
 			{{ csrf_field() }}
 			<div class="modal-body">
 				<p class="text-center">{{ trans('request.enter-bp') }}.</p>
 					<fieldset>
-						<input type='hidden' tabindex='3' name='request_id' value='{{ $request->id }}'>
+						<input type='hidden' tabindex='3' name='request_id' value='{{ $torrentRequest->id }}'>
 						<input type="number" tabindex="3" name='bonus_value' min='100' value="100">
     				</fieldset>
 					<br>
@@ -20,7 +20,7 @@
 						<button type="submit" @if($user->seedbonus < 100) disabled title='{{ trans('request.dont-have-bps') }}'@endif class="btn btn-success">{{ trans('request.vote') }}</button>
 					</div>
 			</div>
-			{{ Form::close() }}
+		</form>
 		</div>
 	</div>
 </div>
@@ -33,12 +33,12 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('common.close') }}"><span aria-hidden="true">&times;</span></button>
 				<h2><i class="fa fa-thumbs-up"></i> {{ trans('request.fill-request') }}!</h2>
 			</div>
-			{{ Form::open(['route' => ['fill_request', 'id' => $request->id], 'method' => 'post', 'role' => 'form']) }}
+			<form role="form" method="POST" action="{{ route('fill_request',['id' => $torrentRequest->id]) }}">
 			{{ csrf_field() }}
 			<div class="modal-body">
 				<p class="text-center">{{ trans('request.enter-hash') }}.</p>
 					<fieldset>
-						<input type='hidden' tabindex='3' name='request_id' value='{{ $request->id }}'>
+						<input type='hidden' tabindex='3' name='request_id' value='{{ $torrentRequest->id }}'>
       					<input type="text" tabindex="3" name='info_hash' placeholder="{{ trans('request.torrent-hash') }}">
     				</fieldset>
 					<br>
@@ -47,7 +47,7 @@
 						<button type="submit" class="btn btn-success">{{ trans('request.fill') }}</button>
 					</div>
 			</div>
-			{{ Form::close() }}
+		</form>
 		</div>
 	</div>
 </div>
@@ -60,16 +60,16 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('common.close') }}"><span aria-hidden="true">&times;</span></button>
 				<h2><i class="fa fa-thumbs-up"></i>{{ trans('request.reset-request') }}!</h2>
 			</div>
-			{{ Form::open(['route' => ['resetRequest', 'id' => $request->id], 'method' => 'post', 'role' => 'form']) }}
+			<form role="form" method="POST" action="{{ route('resetRequest',['id' => $torrentRequest->id]) }}">
 			{{ csrf_field() }}
 			<div class="modal-body">
 				<p class="text-center">{{ trans('request.reset-confirmation') }}?</p>
 					<div class="btns">
 						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('common.cancel') }}</button>
-						<button type="submit" @if(!$user->group->is_modo || $request->filled_hash == null) disabled @endif class="btn btn-warning">{{ trans('common.cancel') }}</button>
+						<button type="submit" @if(!$user->group->is_modo || $torrentRequest->filled_hash == null) disabled @endif class="btn btn-warning">{{ trans('request.reset') }}</button>
 					</div>
 			</div>
-			{{ Form::close() }}
+		</form>
 		</div>
 	</div>
 </div>
@@ -82,7 +82,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('common.close') }}"><span aria-hidden="true">&times;</span></button>
 				<h2><i class="fa fa-thumbs-up"></i>{{ trans('request.delete') }}</h2>
 			</div>
-			{{ Form::open(['route' => ['deleteRequest', 'id' => $request->id], 'method' => 'post', 'role' => 'form']) }}
+			<form role="form" method="POST" action="{{ route('deleteRequest',['id' => $torrentRequest->id]) }}">
 			{{ csrf_field() }}
 			<div class="modal-body">
 				<p class="text-center">{{ trans('request.delete-confirmation') }}?</p>
@@ -91,10 +91,10 @@
 					</fieldset>
 					<div class="btns">
 						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('common.cancel') }}</button>
-						<button type="submit" @if($request->filled_hash != null) disabled @endif class="btn btn-warning">{{ trans('common.delete') }}</button>
+						<button type="submit" @if($torrentRequest->filled_hash != null) disabled @endif class="btn btn-warning">{{ trans('common.delete') }}</button>
 					</div>
 			</div>
-			{{ Form::close() }}
+		</form>
 		</div>
 	</div>
 </div>
@@ -107,7 +107,8 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('common.close') }}"><span aria-hidden="true">&times;</span></button>
         <h2><i class="fa fa-thumbs-up"></i>{{ trans('request.claim') }}</h2>
       </div>
-      {{ Form::open(['route' => ['claimRequest', 'id' => $request->id], 'method' => 'post', 'role' => 'form']) }}
+	  <form role="form" method="POST" action="{{ route('claimRequest',['id' => $torrentRequest->id]) }}">
+	  {{ csrf_field() }}
       <div class="modal-body">
         <p class="text-center">{{ trans('request.claim-as-anon') }}?</p>
         <br>
@@ -128,7 +129,7 @@
           </div>
         </center>
       </div>
-      {{ Form::close() }}
+  </form>
     </div>
   </div>
 </div>
@@ -138,10 +139,10 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <meta charset="utf-8">
-      <title>{{ trans('request.report') }}: {{ $request->name }}</title>
+      <title>{{ trans('request.report') }}: {{ $torrentRequest->name }}</title>
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('common.close') }}"><span aria-hidden="true">×</span></button>
-        <h4 class="modal-title" id="myModalLabel">{{ trans('request.report') }}: {{ $request->name }}</h4>
+        <h4 class="modal-title" id="myModalLabel">{{ trans('request.report') }}: {{ $torrentRequest->name }}</h4>
       </div>
       <div class="modal-body">
         <form class="form-horizontal" role="form" method="POST" action="{{ route('postReport') }}">
@@ -150,8 +151,8 @@
           <input id="type" name="type" type="hidden" value="Request">
           <label for="file_name" class="col-sm-2 control-label">{{ trans('request.request') }}</label>
           <div class="col-sm-10">
-            <input id="title" name="title" type="hidden" value="{{ $request->name }}">
-            <p class="form-control-static">{{ $request->name }}</p>
+            <input id="title" name="title" type="hidden" value="{{ $torrentRequest->name }}">
+            <p class="form-control-static">{{ $torrentRequest->name }}</p>
           </div>
         </div>
         <div class="form-group">

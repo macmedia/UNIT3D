@@ -1,7 +1,7 @@
 @extends('layout.default')
 
 @section('title')
-	<title>User Notes - Staff Dashboard - {{ Config::get('other.title') }}</title>
+	<title>User Notes - Staff Dashboard - {{ config('other.title') }}</title>
 @endsection
 
 @section('meta')
@@ -44,10 +44,10 @@
     @foreach($notes as $n)
       <tr>
         <td>
-					<a class="name" href="{{ route('profil', ['username' => $n->noteduser->username, 'id' => $n->user_id ]) }}">{{ $n->noteduser->username }}</a>
+			<a class="name" href="{{ route('profile', ['username' => $n->noteduser->username, 'id' => $n->user_id ]) }}">{{ $n->noteduser->username }}</a>
         </td>
         <td>
-					<a class="name" href="{{ route('profil', ['username' => $n->staffuser->username, 'id' => $n->staff_id ]) }}">{{ $n->staffuser->username }}</a>
+			<a class="name" href="{{ route('profile', ['username' => $n->staffuser->username, 'id' => $n->staff_id ]) }}">{{ $n->staffuser->username }}</a>
         </td>
         <td>
           {{ $n->message }}
@@ -59,6 +59,7 @@
   </table>
   </div>
 </div>
+<center>{{ $notes->links() }}</center>
 </div>
 </div>
 @endsection

@@ -13,15 +13,12 @@
 namespace App\Http\Controllers\Staff;
 
 use App\User;
-use App\Group;
 use App\Torrent;
-use App\Requests;
-use App\Category;
-use App\Peer;
+use App\TorrentRequest;
+use App\PrivateMessage;
+use App\Helpers\TorrentHelper;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Carbon\Carbon;
 use \Toastr;
 
@@ -34,11 +31,12 @@ class ModerationController extends Controller
     public function moderation()
     {
         $current = Carbon::now();
-        $pending = Torrent::pending()->get(); //returns all Pending Torrents
+        $pending = Torrent::pending()->get();
+        $postponed = Torrent::postponed()->get();
         $rejected = Torrent::rejected()->get();
-        $modder = DB::table('torrents')->where('status', '=', '0')->count();
+        $modder = Torrent::where('status', 0)->count();
 
-        return view('Staff.torrent.moderation', ['current' => $current, 'pending' => $pending, 'rejected' => $rejected, 'modder' => $modder]);
+        return view('Staff.torrent.moderation', compact(['current', 'pending', 'postponed', 'rejected', 'modder']));
     }
 
     /**
@@ -49,22 +47,75 @@ class ModerationController extends Controller
      */
     public function approve($slug, $id)
     {
-        Torrent::approve($id);
+        TorrentHelper::approveHelper($slug, $id);
 
         return redirect()->route('moderation')->with(Toastr::success('Torrent Approved', 'Yay!', ['options']));
     }
 
     /**
+     * Torrent Moderation -> postpone
+     *
+     * @param $request Request containing torrent's id, slug and rejection message
+     */
+    public function postpone(Request $request)
+    {
+        $v = validator($request->all(), [
+            'id' => "required|exists:torrents",
+            'slug' => "required|exists:torrents",
+            'message' => "required|alpha_dash"
+        ]);
+
+        if ($v) {
+            $user = auth()->user();
+            $torrent = Torrent::withAnyStatus()->where('id', $request->input('id'))->first();
+            $torrent->markPostponed();
+
+            PrivateMessage::create([
+            'sender_id' => $user->id,
+            'reciever_id' => $torrent->user_id,
+            'subject' => "Your upload has been postponed by {$user->username}",
+            'message' => "Greating user, \n\n Your upload {$torrent->username} has been postponed. Please see below the message from the staff member. \n\n{$request->input('message')}"]);
+
+            return redirect()->route('moderation')->with(Toastr::success('Torrent Postpones', 'Postponed', ['options']));
+        } else {
+            $errors = "";
+            foreach ($v->errors()->all() as $error) {
+                $errors .= $error . "\n";
+            }
+            \Log::notice("Rejection of torrent failed due to: \n\n".$errors);
+            return redirect()->route('moderation')->with(Toastr::error('Unable to Reject torrent', 'Reject', ['options']));
+        }
+    }
+
+    /**
      * Torrent Moderation -> reject
      *
-     * @param $slug Slug of the torrent
-     * @param $id Id of the torrent
+     * @param $request Request containing torrent's id, slug and rejection message
      */
-    public function reject($slug, $id)
+    public function reject(Request $request)
     {
-        Torrent::reject($id);
+        $v = validator($request->all(), [
+                'id' => "required|exists:torrents",
+                'slug' => "required|exists:torrents",
+                'message' => "required|alpha_dash"
+            ]);
 
-        return redirect()->route('moderation')->with(Toastr::error('Torrent Rejected', 'Whoops!', ['options']));
+        if ($v) {
+            $user = auth()->user();
+            $torrent = Torrent::withAnyStatus()->where('id', $request->input('id'))->first();
+            $torrent->markRejected();
+
+            PrivateMessage::create(['sender_id' => $user->id, 'reciever_id' => $torrent->user_id, 'subject' => "Your upload has been rejected by {$user->username}", 'message' => "Greating user, \n\n Your upload {$torrent->username} has been rejected. Please see below the message from the staff member. \n\n{$request->input('message')}"]);
+
+            return redirect()->route('moderation')->with(Toastr::success('Torrent Rejected', 'Reject', ['options']));
+        } else {
+            $errors = "";
+            foreach ($v->errors()->all() as $error) {
+                $errors .= $error . "\n";
+            }
+            \Log::notice("Rejection of torrent failed due to: \n\n".$errors);
+            return redirect()->route('moderation')->with(Toastr::error('Unable to Reject torrent', 'Reject', ['options']));
+        }
     }
 
     /**
@@ -74,17 +125,16 @@ class ModerationController extends Controller
      */
     public function resetRequest($id)
     {
-        $user = Auth::user();
+        $user = auth()->user();
         // reset code here
         if ($user->group->is_modo) {
-            $request = Requests::findOrFail($id);
-
-            $request->filled_by = null;
-            $request->filled_when = null;
-            $request->filled_hash = null;
-            $request->approved_by = null;
-            $request->approved_when = null;
-            $request->save();
+            $torrentRequest = TorrentRequest::findOrFail($id);
+            $torrentRequest->filled_by = null;
+            $torrentRequest->filled_when = null;
+            $torrentRequest->filled_hash = null;
+            $torrentRequest->approved_by = null;
+            $torrentRequest->approved_when = null;
+            $torrentRequest->save();
 
             return redirect()->route('request', ['id' => $id])->with(Toastr::success("The request has been reset!", 'Yay!', ['options']));
         } else {

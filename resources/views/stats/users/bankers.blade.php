@@ -1,7 +1,7 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('stat.stats') }} - {{ Config::get('other.title') }}</title>
+<title>{{ trans('stat.stats') }} - {{ config('other.title') }}</title>
 @endsection
 
 @section('breadcrumb')
@@ -30,19 +30,23 @@
       <table class="table table-condensed table-striped table-bordered">
         <thead>
           <tr>
+            <th>#</th>
             <th>{{ trans('common.user') }}</th>
             <th>{{ trans('common.balance') }}</th>
           </tr>
         </thead>
         <tbody>
-          @foreach($bankers as $b)
+        @foreach($bankers as $key => $b)
           <tr>
             <td>
+                {{ ++$key }}
+            </td>
+            <td @if(auth()->user()->username == $b->username) class="mentions" @endif>
               @if($b->private_profile == 1)
-              <span class="badge-user text-bold"><span class="text-orange"><i class="fa fa-eye-slash" aria-hidden="true"></i>{{ strtoupper(trans('common.hidden')) }}</span>@if(Auth::user()->id == $b->id || Auth::user()->group->is_modo)<a href="{{ route('profil', ['username' => $b->username, 'id' => $b->id]) }}">({{ $b->username }}</a></span>
+              <span class="badge-user text-bold"><span class="text-orange"><i class="fa fa-eye-slash" aria-hidden="true"></i>{{ strtoupper(trans('common.hidden')) }}</span>@if(auth()->user()->id == $b->id || auth()->user()->group->is_modo)<a href="{{ route('profile', ['username' => $b->username, 'id' => $b->id]) }}">({{ $b->username }}</a></span>
               @endif
               @else
-              <span class="badge-user text-bold"><a href="{{ route('profil', ['username' => $b->username, 'id' => $b->id]) }}">{{ $b->username }}</a></span>
+              <span class="badge-user text-bold"><a href="{{ route('profile', ['username' => $b->username, 'id' => $b->id]) }}">{{ $b->username }}</a></span>
               @endif
             </td>
             <td>

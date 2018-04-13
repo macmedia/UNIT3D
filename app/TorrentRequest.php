@@ -19,7 +19,7 @@ use App\Helpers\Bbcode;
  * Torrent Requests
  *
  */
-class Requests extends Model
+class TorrentRequest extends Model
 {
 
     /**
@@ -124,7 +124,7 @@ class Requests extends Model
      */
     public function comments()
     {
-        return $this->hasMany(\App\Comment::class);
+        return $this->hasMany(\App\Comment::class, "requests_id", "id");
     }
 
     /**
@@ -133,7 +133,7 @@ class Requests extends Model
      */
     public function requestBounty()
     {
-        return $this->hasMany(\App\RequestsBounty::class);
+        return $this->hasMany(\App\TorrentRequestBounty::class, "requests_id", "id");
     }
 
     /**

@@ -12,12 +12,11 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use App\Torrent;
 use App\Peer;
 use App\Client;
-
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class autoSeedbox extends Command
 {
@@ -47,10 +46,10 @@ class autoSeedbox extends Command
         $seedboxips = Client::select('ip')->get()->toArray();
 
         if (is_array($seedboxips) && count($seedboxips) > 0) {
-            $torid = Peer::select('torrent_id')->whereIn('ip', $seedboxips)->get()->toArray();
+            $torid = Peer::select('torrent_id')->whereIn('ip', $seedboxips)->where('seeder', 1)->get()->toArray();
 
             foreach ($torid as $id) {
-                $torrent = Torrent::where('id', '=', $id)->first();
+                $torrent = Torrent::where('id', $id)->first();
                 $torrent->highspeed = 1;
                 $torrent->save();
 

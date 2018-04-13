@@ -26,7 +26,7 @@ class RecordFailedLoginAttempt
     {
         FailedLoginAttempt::record(
             $event->user,
-            Request::get('username'),
+            Request::input('username'),
             Request::getClientIp()
         );
 

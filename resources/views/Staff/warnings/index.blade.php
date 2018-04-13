@@ -1,7 +1,7 @@
 @extends('layout.default')
 
 @section('title')
-	<title>Warnings Log - Staff Dashboard - {{ Config::get('other.title') }}</title>
+	<title>Warnings Log - Staff Dashboard - {{ config('other.title') }}</title>
 @endsection
 
 @section('meta')
@@ -48,10 +48,10 @@
     @foreach($warnings as $warning)
       <tr>
         <td>
-			<a class="view-user" data-id="{{ $warning->warneduser->id }}" data-slug="{{ $warning->warneduser->username }}" href="{{ route('profil', ['username' =>  $warning->warneduser->username, 'id' => $warning->warneduser->id]) }}">{{ $warning->warneduser->username }}</a>
+			<a class="view-user" data-id="{{ $warning->warneduser->id }}" data-slug="{{ $warning->warneduser->username }}" href="{{ route('profile', ['username' =>  $warning->warneduser->username, 'id' => $warning->warneduser->id]) }}">{{ $warning->warneduser->username }}</a>
         </td>
         <td>
-			<a class="view-torrent" data-id="{{ $warning->staffuser->id }}" data-slug="{{ $warning->staffuser->username }}" href="{{ route('profil', ['username' => $warning->staffuser->username, 'id' => $warning->staffuser->id]) }}">{{ $warning->staffuser->username }}</a>
+			<a class="view-torrent" data-id="{{ $warning->staffuser->id }}" data-slug="{{ $warning->staffuser->username }}" href="{{ route('profile', ['username' => $warning->staffuser->username, 'id' => $warning->staffuser->id]) }}">{{ $warning->staffuser->username }}</a>
         </td>
         <td>
 		  <a class="view-torrent" data-id="{{ $warning->torrenttitle->id }}" data-slug="{{ $warning->torrenttitle->name }}" href="{{ route('torrent', array('slug' =>$warning->torrenttitle->slug, 'id' => $warning->torrenttitle->id)) }}">{{ $warning->torrenttitle->name }}</a>
@@ -79,7 +79,7 @@
   </table>
   </div>
 </div>
-{{ $warnings->links() }}
+<center>{{ $warnings->links() }}</center>
 </div>
 </div>
 @endsection

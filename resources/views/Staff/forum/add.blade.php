@@ -1,7 +1,7 @@
 @extends('layout.default')
 
 @section('title')
-	<title>Add Forums - Staff Dashboard - {{ Config::get('other.title') }}</title>
+	<title>Add Forums - Staff Dashboard - {{ config('other.title') }}</title>
 @endsection
 
 @section('meta')
@@ -70,8 +70,6 @@
 						<th>Read topics</th>
 						<th>Start new topic</th>
 						<th>Reply to topics</th>
-						<th>Upload</th>
-						<th>Download</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -82,8 +80,6 @@
 							<td><input type="checkbox" name="permissions[{{ $g->id }}][read_topic]" value="1"></td>
 							<td><input type="checkbox" name="permissions[{{ $g->id }}][start_topic]" value="1"></td>
 							<td><input type="checkbox" name="permissions[{{ $g->id }}][reply_topic]" value="1"></td>
-							<td><input type="checkbox" name="permissions[{{ $g->id }}][upload]" value="1"></td>
-							<td><input type="checkbox" name="permissions[{{ $g->id }}][download]" value="1"></td>
 						</tr>
 					@endforeach
 				</tbody>

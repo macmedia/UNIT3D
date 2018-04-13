@@ -12,25 +12,20 @@
 
 namespace App\Traits;
 
-use Auth;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\TwoStepAuth;
 use App\Notifications\TwoStepAuthCode;
+use Carbon\Carbon;
 
 trait TwoStep
 {
     /**
      * Check if the user is authorized
      *
-     * @param  Request $request
-     *
      * @return boolean
      */
-    public function twoStepVerification($request)
+    private function twoStepVerification()
     {
-        $user = Auth::User();
+        $user = auth()->user();
         if ($user) {
             $twoStepAuthStatus = $this->checkTwoStepAuthStatus($user->id);
             if ($twoStepAuthStatus->authStatus !== true) {
@@ -226,7 +221,7 @@ trait TwoStep
      */
     protected function sendVerificationCodeNotification($twoStepAuth, $deliveryMethod = null)
     {
-        $user = Auth::User();
+        $user = auth()->user();
         if ($deliveryMethod === null) {
             $user->notify(new TwoStepAuthCode($user, $twoStepAuth->authCode));
         }

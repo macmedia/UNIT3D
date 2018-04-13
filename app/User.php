@@ -12,6 +12,11 @@
 
 namespace App;
 
+use App\Ban;
+use App\Warning;
+use App\Peer;
+use App\History;
+use Cache;
 use Gstt\Achievements\Achiever;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Notifications\Notifiable;
@@ -33,12 +38,6 @@ class User extends Authenticatable
 {
     use Notifiable;
     use Achiever;
-
-    public $rules = [
-        'username' => 'required|alpha_dash|min:3|max:20|unique:users',
-        'email' => 'required|email|max:255|unique:users',
-        'password' => 'required|min:6',
-    ];
 
     /**
      * The database table used by the model.
@@ -167,6 +166,15 @@ class User extends Authenticatable
     }
 
     /**
+    * Has Many Topics
+    *
+    */
+    public function topics()
+    {
+        return $this->hasMany(Topic::class, 'first_post_user_id', 'id');
+    }
+
+    /**
      * Has many posts
      *
      */
@@ -190,7 +198,7 @@ class User extends Authenticatable
      */
     public function requests()
     {
-        return $this->hasMany(\App\Requests::class);
+        return $this->hasMany(\App\TorrentRequest::class);
     }
 
     /**
@@ -199,7 +207,7 @@ class User extends Authenticatable
      */
     public function ApprovedRequests()
     {
-        return $this->hasMany(\App\Requests::class, 'approved_by');
+        return $this->hasMany(\App\TorrentRequest::class, 'approved_by');
     }
 
     /**
@@ -208,7 +216,7 @@ class User extends Authenticatable
      */
     public function FilledRequests()
     {
-        return $this->hasMany(\App\Requests::class, 'filled_by');
+        return $this->hasMany(\App\TorrentRequest::class, 'filled_by');
     }
 
     /**
@@ -217,7 +225,7 @@ class User extends Authenticatable
      */
     public function requestBounty()
     {
-        return $this->hasMany(\App\RequestsBounty::class);
+        return $this->hasMany(\App\TorrentRequestBounty::class);
     }
 
     /**

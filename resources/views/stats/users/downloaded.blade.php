@@ -1,7 +1,7 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('stat.stats') }} - {{ Config::get('other.title') }}</title>
+<title>{{ trans('stat.stats') }} - {{ config('other.title') }}</title>
 @endsection
 
 @section('breadcrumb')
@@ -30,6 +30,7 @@
       <table class="table table-condensed table-striped table-bordered">
         <thead>
           <tr>
+            <th>#</th>
             <th>{{ trans('common.user') }}</th>
             <th>{{ trans('common.upload') }}</th>
             <th>{{ trans('common.download') }}</th>
@@ -37,14 +38,17 @@
           </tr>
         </thead>
         <tbody>
-          @foreach($downloaded as $d)
+          @foreach($downloaded as $key => $d)
           <tr>
             <td>
+                {{ ++$key }}
+            </td>
+            <td @if(auth()->user()->username == $d->username) class="mentions" @endif>
               @if($d->private_profile == 1)
-              <span class="badge-user text-bold"><span class="text-orange"><i class="fa fa-eye-slash" aria-hidden="true"></i>{{ strtoupper(trans('common.hidden')) }}</span>@if(Auth::user()->id == $d->id || Auth::user()->group->is_modo)<a href="{{ route('profil', ['username' => $d->username, 'id' => $d->id]) }}">({{ $d->username }}</a></span>
+              <span class="badge-user text-bold"><span class="text-orange"><i class="fa fa-eye-slash" aria-hidden="true"></i>{{ strtoupper(trans('common.hidden')) }}</span>@if(auth()->user()->id == $d->id || auth()->user()->group->is_modo)<a href="{{ route('profile', ['username' => $d->username, 'id' => $d->id]) }}">({{ $d->username }}</a></span>
               @endif
               @else
-              <span class="badge-user text-bold"><a href="{{ route('profil', ['username' => $d->username, 'id' => $d->id]) }}">{{ $d->username }}</a></span>
+              <span class="badge-user text-bold"><a href="{{ route('profile', ['username' => $d->username, 'id' => $d->id]) }}">{{ $d->username }}</a></span>
               @endif
             </td>
             <td>{{ \App\Helpers\StringHelper::formatBytes($d->uploaded, 2) }}</td>

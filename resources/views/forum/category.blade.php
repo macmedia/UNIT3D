@@ -1,7 +1,7 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ $c->name }} - {{ trans('forum.forums') }} - {{ Config::get('other.title') }}</title>
+<title>{{ $c->name }} - {{ trans('forum.forums') }} - {{ config('other.title') }}</title>
 @endsection
 
 @section('meta')
@@ -66,7 +66,7 @@
                                     <li class="f-category-forums-last-post-item"><a href="{{ route('forum_topic', array('slug' => $f->last_topic_slug, 'id' => $f->last_topic_id)) }}">{{ $f->last_topic_name }}</a></li>
                                     <li class="f-category-forums-last-post-item">
                                         By
-                                        <a href="{{ route('profil', ['username' => $f->last_post_user_username, 'id' => $f->last_post_user_id]) }}">{{ $f->last_post_user_username }}</a>
+                                        <a href="{{ route('profile', ['username' => $f->last_post_user_username, 'id' => $f->last_post_user_id]) }}">{{ $f->last_post_user_username }}</a>
                                     </li>
                                     <li class="f-category-forums-last-post-item">
                                         <time datetime="{{ date('d-m-Y h:m', strtotime($f->updated_at)) }}">

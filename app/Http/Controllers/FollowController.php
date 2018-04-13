@@ -14,8 +14,6 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Follow;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use \Toastr;
 
 class FollowController extends Controller
@@ -29,16 +27,16 @@ class FollowController extends Controller
      */
     public function follow(User $user)
     {
-        if (Auth::user()->id == $user->id) {
-            return redirect()->route('profil', ['username' => $user->username, 'id' => $user->id])->with(Toastr::error("Nice try, but sadly you can not follow yourself.", 'Whoops!', ['options']));
-        } elseif (!Auth::user()->isFollowing($user->id)) {
+        if (auth()->user()->id == $user->id) {
+            return redirect()->route('profile', ['username' => $user->username, 'id' => $user->id])->with(Toastr::error("Nice try, but sadly you can not follow yourself.", 'Whoops!', ['options']));
+        } elseif (!auth()->user()->isFollowing($user->id)) {
             // Create a new follow instance for the authenticated user
-            Auth::user()->follows()->create([
+            auth()->user()->follows()->create([
                 'target_id' => $user->id,
             ]);
-            return redirect()->route('profil', ['username' => $user->username, 'id' => $user->id])->with(Toastr::success('You are now following ' . $user->username, 'Yay!', ['options']));
+            return redirect()->route('profile', ['username' => $user->username, 'id' => $user->id])->with(Toastr::success('You are now following ' . $user->username, 'Yay!', ['options']));
         } else {
-            return redirect()->route('profil', ['username' => $user->username, 'id' => $user->id])->with(Toastr::error('You are already following this user', 'Whoops!', ['options']));
+            return redirect()->route('profile', ['username' => $user->username, 'id' => $user->id])->with(Toastr::error('You are already following this user', 'Whoops!', ['options']));
         }
     }
 
@@ -50,13 +48,13 @@ class FollowController extends Controller
      */
     public function unfollow(User $user)
     {
-        if (Auth::user()->isFollowing($user->id)) {
-            $follow = Auth::user()->follows()->where('target_id', $user->id)->first();
+        if (auth()->user()->isFollowing($user->id)) {
+            $follow = auth()->user()->follows()->where('target_id', $user->id)->first();
             $follow->delete();
 
-            return redirect()->route('profil', ['username' => $user->username, 'id' => $user->id])->with(Toastr::success('You are no longer following ' . $user->username, 'Yay!', ['options']));
+            return redirect()->route('profile', ['username' => $user->username, 'id' => $user->id])->with(Toastr::success('You are no longer following ' . $user->username, 'Yay!', ['options']));
         } else {
-            return redirect()->route('profil', ['username' => $user->username, 'id' => $user->id])->with(Toastr::error('You are not following this user to begin with', 'Whoops!', ['options']));
+            return redirect()->route('profile', ['username' => $user->username, 'id' => $user->id])->with(Toastr::error('You are not following this user to begin with', 'Whoops!', ['options']));
         }
     }
 }

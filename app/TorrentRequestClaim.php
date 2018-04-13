@@ -10,22 +10,22 @@
  * @author     HDVinnie
  */
 
-namespace App\Http\Controllers\Staff;
+namespace App;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Model;
 
-class BlockController extends Controller
+class TorrentRequestClaim extends Model
 {
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'request_claims';
 
     /**
-     * Blocks Settings
+     * Mass assignment fields
      *
-     *
-     * @access public
-     * @return Staff.blocks.index
      */
-    public function index()
-    {
-        return view('Staff.blocks.index');
-    }
+    protected $fillable = ['username', 'anon', 'request_id'];
 }

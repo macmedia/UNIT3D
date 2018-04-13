@@ -28,8 +28,7 @@ class Post extends Model
      *
      */
     public $rules = [
-        'title' => 'required',
-        'content' => 'required|min:100',
+        'content' => 'required',
         'user_id' => 'required',
         'topic_id' => 'required'
     ];
@@ -112,7 +111,7 @@ class Post extends Model
 
     public function getPageNumber()
     {
-        $result = ($this->getPostNumber() - 1) / 15 + 1;
+        $result = ($this->getPostNumber() - 1) / 25 + 1;
         $result = floor($result);
         return $result;
     }

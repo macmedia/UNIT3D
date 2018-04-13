@@ -1,7 +1,7 @@
 @extends('layout.default')
 
 @section('title')
-	<title>Bans - Staff Dashboard - {{ Config::get('other.title') }}</title>
+	<title>Bans - Staff Dashboard - {{ config('other.title') }}</title>
 @endsection
 
 @section('meta')
@@ -51,10 +51,10 @@
             {{ $b->id }}
           </td>
           <td class="user-name">
-            <a class="name" href="{{ route('profil', ['username' => $b->banneduser->username, 'id' => $b->owned_by ]) }}">{{ $b->banneduser->username }}</a>
+            <a class="name" href="{{ route('profile', ['username' => $b->banneduser->username, 'id' => $b->owned_by ]) }}">{{ $b->banneduser->username }}</a>
           </td>
           <td class="user-name">
-            <a class="name" href="{{ route('profil', ['username' => $b->staffuser->username, 'id' => $b->created_by ]) }}">{{ $b->staffuser->username }}</a>
+            <a class="name" href="{{ route('profile', ['username' => $b->staffuser->username, 'id' => $b->created_by ]) }}">{{ $b->staffuser->username }}</a>
           </td>
           <td>
             {{ $b->ban_reason }}
@@ -75,6 +75,7 @@
     </table>
   </div>
 </div>
+<center>{{ $bans->links() }}</center>
 </div>
 </div>
 @endsection

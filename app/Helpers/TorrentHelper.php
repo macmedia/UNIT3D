@@ -12,20 +12,33 @@
 
 namespace App\Helpers;
 
-use \App\Services\MovieScrapper;
-use \App\PersonalFreeleech;
-use \App\FreeleechToken;
-use \App\Group;
-use \App\User;
-use \App\History;
+use App\PersonalFreeleech;
+use App\FreeleechToken;
+use App\Group;
+use App\User;
+use App\History;
+use App\Torrent;
+use App\Shoutbox;
+use App\Achievements\UserMadeUpload;
+use App\Achievements\UserMade25Uploads;
+use App\Achievements\UserMade50Uploads;
+use App\Achievements\UserMade100Uploads;
+use App\Achievements\UserMade200Uploads;
+use App\Achievements\UserMade300Uploads;
+use App\Achievements\UserMade400Uploads;
+use App\Achievements\UserMade500Uploads;
+use App\Achievements\UserMade600Uploads;
+use App\Achievements\UserMade700Uploads;
+use App\Achievements\UserMade800Uploads;
+use App\Achievements\UserMade900Uploads;
+use App\Bots\IRCAnnounceBot;
+use App\Services\MovieScrapper;
 
-use Illuminate\Support\Facades\Auth;
-
-class TorrentViewHelper
+class TorrentHelper
 {
     public static function view($results)
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $personal_freeleech = PersonalFreeleech::where('user_id', '=', $user->id)->first();
 
         $data = [];
@@ -40,15 +53,15 @@ class TorrentViewHelper
             $client = new MovieScrapper(config('api-keys.tmdb'), config('api-keys.tvdb'), config('api-keys.omdb'));
             if ($list->category_id == 2) {
                 if ($list->tmdb || $list->tmdb != 0) {
-                $movie = $client->scrape('tv', null, $list->tmdb);
+                    $movie = $client->scrape('tv', null, $list->tmdb);
                 } else {
-                $movie = $client->scrape('tv', 'tt'. $list->imdb);
+                    $movie = $client->scrape('tv', 'tt'. $list->imdb);
                 }
             } else {
                 if ($list->tmdb || $list->tmdb != 0) {
-                $movie = $client->scrape('movie', null, $list->tmdb);
+                    $movie = $client->scrape('movie', null, $list->tmdb);
                 } else {
-                $movie = $client->scrape('movie', 'tt'. $list->imdb);
+                    $movie = $client->scrape('movie', 'tt'. $list->imdb);
                 }
             }
 
@@ -64,9 +77,17 @@ class TorrentViewHelper
 
             $torrent_link = route('torrent', ['slug' => $list->slug, 'id' => $list->id]);
             $download_check_link = route('download_check', ['slug' => $list->slug, 'id' => $list->id]);
-            $user_link = route('profil', ['username' => $list->user->username, 'id' => $list->user->id]);
+            $user_link = route('profile', ['username' => $list->user->username, 'id' => $list->user->id]);
             $peers_link = route('peers', ['slug' => $list->slug, 'id' => $list->id]);
             $history_link = route('history', ['slug' => $list->slug, 'id' => $list->id]);
+
+            $unbookmark_link = route('unbookmark', ['id' => $list->id]);
+            $bookmark_link = route('bookmark', ['id' => $list->id]);
+            if ($user->hasBookmarked($list->id)) {
+                $bookmark = "<a href='{$unbookmark_link}'><button class='btn btn-danger btn-circle' type='button' data-toggle='tooltip' title='' data-original-title='trans('torrent.unbookmark')!'><i class='fa fa-bookmark'></i></button></a>";
+            } else {
+                $bookmark = "<a href='{$bookmark_link}'><button class='btn btn-primary btn-circle' type='button' data-toggle='tooltip' title='' data-original-title='trans('torrent.bookmark')!'><i class='fa fa-bookmark'></i></button></a>";
+            }
 
             if ($list->anon == 1) {
                 if ($user->id == $list->user->id || $user->group->is_modo) {
@@ -81,24 +102,24 @@ class TorrentViewHelper
             }
 
             if ($list->category->meta == 1) {
-            if ($user->ratings == 1) {
-                $link = "https://anon.to?http://www.imdb.com/title/tt" . $list->imdb;
-                $rating = $movie->imdbRating;
-                $votes = $movie->imdbVotes;
-            } else {
-                $rating = $movie->tmdbRating;
-                $votes = $movie->tmdbVotes;
-                if ($list->category_id == '2') {
-                    $link = "https://www.themoviedb.org/tv/" . $movie->tmdb;
+                if ($user->ratings == 1) {
+                    $link = "https://anon.to?http://www.imdb.com/title/tt" . $list->imdb;
+                    $rating = $movie->imdbRating;
+                    $votes = $movie->imdbVotes;
                 } else {
-                    $link = "https://www.themoviedb.org/movie/" . $movie->tmdb;
+                    $rating = $movie->tmdbRating;
+                    $votes = $movie->tmdbVotes;
+                    if ($list->category_id == '2') {
+                        $link = "https://www.themoviedb.org/tv/" . $movie->tmdb;
+                    } else {
+                        $link = "https://www.themoviedb.org/movie/" . $movie->tmdb;
+                    }
                 }
+            } else {
+                $link = "#";
+                $rating = "0";
+                $votes = "0";
             }
-        } else {
-            $link = "#";
-            $rating = "0";
-            $votes = "0";
-        }
 
             $thank_count = $list->thanks()->count();
 
@@ -198,8 +219,10 @@ class TorrentViewHelper
               <span class='label label-success'>{$list->type}</span>
               </center>
             </td>
-            <td><a class='view-torrent' data-id='{$list->id}' data-slug='{$list->slug}' href='{$torrent_link}' data-toggle='tooltip' title='' data-original-title='{$list->name}'>{$list->name}</a>
+            <td>
+                <a class='view-torrent' data-id='{$list->id}' data-slug='{$list->slug}' href='{$torrent_link}' data-toggle='tooltip' title='' data-original-title='{$list->name}'>{$list->name}</a>
                 <a href='{$download_check_link}'><button class='btn btn-primary btn-circle' type='button' data-toggle='tooltip' title='' data-original-title='DOWNLOAD!'><i class='fa fa-download'></i></button></a>
+                {$bookmark}
                 {$status}
                 <br>
                 <strong>
@@ -231,5 +254,62 @@ class TorrentViewHelper
             ";
         }
         return $data;
+    }
+
+    public static function approveHelper($slug, $id)
+    {
+        Torrent::approve($id);
+
+        $torrent = Torrent::withAnyStatus()->where('id', '=', $id)->where('slug', '=', $slug)->first();
+        $user = $torrent->user;
+        $user_id = $user->id;
+        $username = $user->username;
+        $anon = $torrent->anon;
+
+        if ($anon == 0) {
+            // Auto Shout and Achievements
+            $user->unlock(new UserMadeUpload(), 1);
+            $user->addProgress(new UserMade25Uploads(), 1);
+            $user->addProgress(new UserMade50Uploads(), 1);
+            $user->addProgress(new UserMade100Uploads(), 1);
+            $user->addProgress(new UserMade200Uploads(), 1);
+            $user->addProgress(new UserMade300Uploads(), 1);
+            $user->addProgress(new UserMade400Uploads(), 1);
+            $user->addProgress(new UserMade500Uploads(), 1);
+            $user->addProgress(new UserMade600Uploads(), 1);
+            $user->addProgress(new UserMade700Uploads(), 1);
+            $user->addProgress(new UserMade800Uploads(), 1);
+            $user->addProgress(new UserMade900Uploads(), 1);
+        }
+
+        // Announce To Shoutbox
+        $appurl = config('app.url');
+        if ($torrent->sd == 0) {
+            if ($anon == 0) {
+                Shoutbox::create(['user' => "1", 'mentions' => "1", 'message' => "User [url={$appurl}/" . $username . "." . $user_id . "]" . $username . "[/url] has uploaded [url={$appurl}/torrents/" . $slug . "." . $id . "]" . $torrent->name . "[/url] grab it now! :slight_smile:"]);
+                cache()->forget('shoutbox_messages');
+            } else {
+                Shoutbox::create(['user' => "1", 'mentions' => "1", 'message' => "An anonymous user has uploaded [url={$appurl}/torrents/" . $slug . "." . $id . "]" . $torrent->name . "[/url] grab it now! :slight_smile:"]);
+                cache()->forget('shoutbox_messages');
+            }
+        }
+
+        // Announce To IRC
+        if (config('irc-bot.enabled') == true) {
+            $appname = config('app.name');
+            $bot = new IRCAnnounceBot();
+            if ($anon == 0) {
+                $bot->message("#announce", "[" . $appname . "] User " . $username . " has uploaded " . $torrent->name . " grab it now!");
+                $bot->message("#announce", "[Category: " . $torrent->category->name . "] [Type: " . $torrent->type . "] [Size:" . $torrent->getSize() . "]");
+                $bot->message("#announce", "[Link: {$appurl}/torrents/" . $slug . "." . $id . "]");
+            } else {
+                $bot->message("#announce", "[" . $appname . "] An anonymous user has uploaded " . $torrent->name . " grab it now!");
+                $bot->message("#announce", "[Category: " . $torrent->category->name . "] [Type: " . $torrent->type . "] [Size: " . $torrent->getSize() . "]");
+                $bot->message("#announce", "[Link: {$appurl}/torrents/" . $slug . "." . $id . "]");
+            }
+        }
+
+        // Activity Log
+        \LogActivity::addToLog("Torrent " . $torrent->name . " uploaded by " . $username . " has been approved.");
     }
 }

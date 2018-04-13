@@ -12,12 +12,10 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Command;
 use App\PrivateMessage;
 use App\Warning;
 use Carbon\Carbon;
-
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class deactivateWarning extends Command
 {
@@ -43,7 +41,7 @@ class deactivateWarning extends Command
     public function handle()
     {
         $current = Carbon::now();
-        $warnings = Warning::with(['warneduser', 'torrenttitle'])->where('active', '=', '1')->where('expires_on', '<', $current)->get();
+        $warnings = Warning::with(['warneduser', 'torrenttitle'])->where('active', 1)->where('expires_on', '<', $current)->get();
 
         foreach ($warnings as $warning) {
             // Set Records Active To 0 in warnings table

@@ -12,9 +12,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Http\Request;
 use App\Torrent;
 use App\History;
 use App\Graveyard;
@@ -33,20 +31,20 @@ class GraveyardController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $dead = Torrent::where('seeders', '=', '0')->orderBy('leechers', 'desc')->paginate(50);
-        $deadcount = Torrent::where('seeders', '=', '0')->count();
+        $user = auth()->user();
+        $dead = Torrent::where('seeders', 0)->latest('leechers')->paginate(50);
+        $deadcount = Torrent::where('seeders', 0)->count();
         $time = config('graveyard.time');
         $tokens = config('graveyard.reward');
 
         return view('graveyard.index', compact('dead', 'deadcount', 'user', 'time', 'tokens'));
     }
 
-    public function resurrect($id)
+    public function resurrect(Request $request, $id)
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $torrent = Torrent::findOrFail($id);
-        $resurrected = Graveyard::where('torrent_id', '=', $torrent->id)->first();
+        $resurrected = Graveyard::where('torrent_id', $torrent->id)->first();
         if ($resurrected) {
             return redirect()->route('graveyard')->with(Toastr::error('Torrent Resurrection Failed! This torrent is already pending a resurrection.', 'Whoops!', ['options']));
         }
@@ -54,7 +52,7 @@ class GraveyardController extends Controller
             $resurrection = Graveyard::create([
                 'user_id' => $user->id,
                 'torrent_id' => $torrent->id,
-                'seedtime' => Request::get('seedtime')
+                'seedtime' => $request->input('seedtime')
             ]);
             return redirect()->route('graveyard')->with(Toastr::success('Torrent Resurrection Complete! You will be rewarded automatically once seedtime requirements are met.', 'Yay!', ['options']));
         } else {

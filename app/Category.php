@@ -25,6 +25,7 @@ class Category extends Model
     public $rules = [
         'name' => 'required',
         'slug' => 'required',
+        'position' => 'required',
         'icon' => 'required',
         'meta' => 'required'
     ];
@@ -45,6 +46,6 @@ class Category extends Model
      */
     public function requests()
     {
-        return $this->hasMany(\App\Requests::class);
+        return $this->hasMany(\App\TorrentRequest::class);
     }
 }

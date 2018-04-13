@@ -13,18 +13,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Http\Request as IlluminateRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Auth\Authenticatable;
 use App\Http\Requests\ValidateSecretRequest;
-use Illuminate\Support\Facades\Input;
 use App\Jobs\SendActivationMail;
 use App\UserActivation;
 use App\User;
@@ -33,43 +26,51 @@ use App\Shoutbox;
 use App\PrivateMessage;
 use App\Group;
 use App\Invite;
+use App\Rules\Captcha;
 use \Toastr;
 use Carbon\Carbon;
 use Cache;
 
 class RegisterController extends Controller
 {
-    public function register($code = null)
+    public function register(Request $request, $code = null)
     {
-        // Make sure open reg is off and ivite code exsists and is not used or expired
+        $current = Carbon::now();
+        $user = new User();
+
+        // Make sure open reg is off and ivite code is present
         if (config('other.invite-only') == true && $code == null) {
-            return view('auth.login')->with(Toastr::error('Open Reg Closed! You Must Be Invited To Register!', 'Whoops!', ['options']));
+            return view('auth.login')->with(Toastr::error('Open Reg Closed! You Must Be Invited To Register! You Have Been Redirected To Login Page!', 'Whoops!', ['options']));
         }
 
-        if (Request::isMethod('post')) {
+        if ($request->isMethod('post')) {
+            // Make sure open reg is off and ivite code exsist and has not been used already
             $key = Invite::where('code', '=', $code)->first();
-            if (config('other.invite-only') == true && !$key) {
+            if (config('other.invite-only') == true && (!$key || $key->accepted_by !== null)) {
                 return view('auth.register', ['code' => $code])->with(Toastr::error('Invalid or Expired Invite Key!', 'Whoops!', ['options']));
             }
 
-            $current = Carbon::now();
+            $v = validator($request->all(), [
+                'username' => 'required|alpha_dash|min:3|max:20|unique:users',
+                'email' => 'required|email|max:255|unique:users',
+                'password' => 'required|min:6',
+                'g-recaptcha-response' => new Captcha()
+            ]);
 
-            $input = Request::all();
-            $user = new User();
-            $v = Validator::make($input, $user->rules);
             if ($v->fails()) {
                 $errors = $v->messages();
-                return redirect()->route('register', ['code' => $code])->with(Toastr::error('Either The Username/Email is already in use or you missed a field. Make sure password is also min 8 charaters!', 'Whoops!', ['options']));
+                return redirect()->route('register', ['code' => $code])->with(Toastr::error('Either The Username/Email is already in use or you missed a field. Make sure password is also min 6 charaters!', 'Whoops!', ['options']));
             } else {
                 // Create The User
                 $group = Group::where('slug', '=', 'validating')->first();
-                $user->username = $input['username'];
-                $user->email = $input['email'];
-                $user->password = Hash::make($input['password']);
+                $user->username = $request->input('username');
+                $user->email = $request->input('email');
+                $user->password = Hash::make($request->input('password'));
                 $user->passkey = md5(uniqid() . time() . microtime());
                 $user->rsskey = md5(uniqid() . time() . microtime() . $user->password);
                 $user->uploaded = config('other.default_upload');
                 $user->downloaded = config('other.default_download');
+                $user->style = config('other.default_style', 0);
                 $user->group_id = $group->id;
                 $user->save();
 
