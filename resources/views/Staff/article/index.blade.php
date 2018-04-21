@@ -1,8 +1,8 @@
 @extends('layout.default')
 
 @section('title')
-<title>Articles - Staff Dashboard - {{ Config::get('other.title') }}</title>
-@stop
+<title>Articles - Staff Dashboard - {{ config('other.title') }}</title>
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -15,7 +15,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">Articles</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container box">
@@ -45,4 +45,4 @@
   </table>
  {{ $posts->links() }}
 </div>
-@stop
+@endsection

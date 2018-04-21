@@ -6,21 +6,17 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     Mr.G
  */
 
 namespace App\Console\Commands;
 
-use App\Torrent;
+use Illuminate\Console\Command;
 use App\History;
 use App\PrivateMessage;
-use App\User;
 use App\Warning;
 use Carbon\Carbon;
-
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class autoWarning extends Command
 {
@@ -49,7 +45,7 @@ class autoWarning extends Command
             $current = new Carbon();
             $hitrun = History::with(['user', 'torrent'])
                             ->where('actual_downloaded', '>', 0)
-                            ->where('active', '=', 0)
+                            ->where('active', 0)
                             ->where('seedtime', '<=', config('hitrun.seedtime'))
                             ->where('updated_at', '<', $current->copy()->subDays(config('hitrun.grace'))->toDateTimeString())
                             ->get();
@@ -57,7 +53,7 @@ class autoWarning extends Command
             foreach ($hitrun as $hr) {
                 if (!$hr->user->group->is_immune) {
                     if ($hr->actual_downloaded > ($hr->torrent->size * (config('hitrun.buffer') / 100))) {
-                        $exsist = Warning::where('torrent', '=', $hr->torrent->id)->where('user_id', '=', $hr->user->id)->first();
+                        $exsist = Warning::where('torrent', $hr->torrent->id)->where('user_id', $hr->user->id)->first();
 
                         // Insert Warning Into Warnings Table if doesnt already exsist
                         if (!$exsist) {

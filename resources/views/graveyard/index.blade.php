@@ -1,8 +1,8 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('graveyard.graveyard') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ trans('graveyard.graveyard') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -10,7 +10,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('graveyard.graveyard') }}</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -100,7 +100,8 @@
                       <span class="text-red text-bold">@if(!$history) {{ App\Helpers\StringHelper::timeElapsed($time) }} @else {{ App\Helpers\StringHelper::timeElapsed($history->seedtime + $time) }} @endif</span> {{ strtolower(trans('graveyard.howto-desc2')) }}
                       <span class="badge-user text-bold text-pink" style="background-image:url(https://i.imgur.com/F0UCb7A.gif);">{{ $tokens }} {{ trans('torrent.freeleech') }} Token(s)!</span></p>
                   <div class="btns">
-                    {{ Form::open(array('route' => array('resurrect', 'id' => $d->id))) }}
+                    <form role="form" method="POST" action="{{ route('resurrect',['id' => $d->id]) }}">
+                    {{ csrf_field() }}
                     @if(!$history)
                     <input hidden="seedtime" name="seedtime" id="seedtime" value="{{ $time }}">
                     @else
@@ -108,7 +109,7 @@
                     @endif
                     <button type="submit" class="btn btn-success">{{ trans('graveyard.ressurect') }}!</button>
                     <button type="button" class="btn btn-warning" data-dismiss="modal">{{ trans('common.cancel') }}</button>
-                    {{ Form::close() }}
+                    </form>
                   </div>
                 </center>
               </div>
@@ -122,4 +123,4 @@
   {{ $dead->links() }}
 </div>
 </div>
-@stop
+@endsection

@@ -2,10 +2,11 @@
 <html >
 <head>
   <meta charset="UTF-8">
-  <title>{{ trans('auth.signup') }} - {{ Config::get('other.title') }}</title>
+  <title>{{ trans('auth.signup') }} - {{ config('other.title') }}</title>
   <!-- Meta -->
-    <meta name="description" content="{{ trans('auth.login-now-on') }} {{ Config::get('other.title') }} . {{ trans('auth.not-a-member') }}">
-    <meta property="og:title" content="{{ Config::get('other.title') }}">
+    <meta name="description" content="{{ trans('auth.login-now-on') }} {{ config('other.title') }} . {{ trans('auth.not-a-member') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="{{ config('other.title') }}">
     <meta property="og:type" content="website">
     <meta property="og:image" content="{{ url('/img/rlm.png') }}">
     <meta property="og:url" content="{{ url('/') }}">
@@ -31,7 +32,7 @@
       <symbol id="s-text">
         <text text-anchor="middle"
               x="50%" y="50%" dy=".35em">
-          {{ Config::get('other.title') }}
+          {{ config('other.title') }}
         </text>
       </symbol>
 
@@ -59,12 +60,45 @@
     </div>
 
     <!-- SignUp Form -->
-    {{ Form::open(array('route' => array('register', 'code' => $code))) }}
+    <form role="form" method="POST" action="{{ route('register',['code' => $code]) }}">
+    {{ csrf_field() }}
       <input type="text" id="username" class="fadeIn second" name="username" placeholder="{{ trans('auth.username') }}" required autofocus>
+      @if ($errors->has('username'))
+      <br>
+          <span class="help-block text-red">
+              <strong>{{ $errors->first('username') }}</strong>
+          </span>
+      @endif
       <input type="email" id="email" class="fadeIn third" name="email" placeholder="{{ trans('auth.email') }}" required>
+      @if ($errors->has('email'))
+      <br>
+          <span class="help-block text-red">
+              <strong>{{ $errors->first('email') }}</strong>
+          </span>
+      @endif
       <input type="password" id="password" class="fadeIn third" name="password" placeholder="{{ trans('auth.password') }}" required>
+      @if ($errors->has('password'))
+      <br>
+          <span class="help-block text-red">
+              <strong>{{ $errors->first('password') }}</strong>
+          </span>
+      @endif
+      @if (config('captcha.enabled') == true)
+      <center>
+      <div class="form-group row">
+      <div class="col-md-6 offset-md-4">
+          <div class="g-recaptcha" data-sitekey="{{ config('captcha.sitekey') }}"></div>
+          @if ($errors->has('g-recaptcha-response'))
+            <span class="invalid-feedback" style="display: block;">
+                <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
+            </span>
+          @endif
+          </div>
+      </div>
+      </center>
+      @endif
       <button type="submit" class="fadeIn fourth">{{ trans('auth.signup') }}</button>
-    {{ Form::close() }}
+    </form>
 
     <!-- Remind Passowrd -->
     <div id="formFooter">
@@ -75,6 +109,7 @@
   </div>
 </div>
 <script type="text/javascript" src="{{ url('js/vendor/app.js?v=04') }}"></script>
+<script src="https://www.google.com/recaptcha/api.js"></script>
 {!! Toastr::message() !!}
 </body>
 </html>

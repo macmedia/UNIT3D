@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-	<title>Edit Forums - Staff Dashboard - {{ Config::get('other.title') }}</title>
-@stop
+	<title>Edit Forums - Staff Dashboard - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 	<meta name="description" content="Edit Forums - Staff Dashboard">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -19,7 +19,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">Edit Forums</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container box">
@@ -66,8 +66,6 @@
 						<th>Read topics</th>
 						<th>Start new topic</th>
 						<th>Reply to topics</th>
-						<th>Upload</th>
-						<th>Download</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -102,20 +100,6 @@
 									<input type="checkbox" name="permissions[{{ $g->id }}][reply_topic]" value="1">
 								@endif
 							</td>
-							<td>
-								@if($g->getPermissionsByForum($forum)->upload == true)
-									<input type="checkbox" checked checked name="permissions[{{ $g->id }}][upload]" value="1">
-								@else
-									<input type="checkbox" name="permissions[{{ $g->id }}][upload]" value="1">
-								@endif
-							</td>
-							<td>
-								@if($g->getPermissionsByForum($forum)->download == true)
-									<input type="checkbox" checked checked name="permissions[{{ $g->id }}][download]" value="1">
-								@else
-									<input type="checkbox" name="permissions[{{ $g->id }}][download]" value="1">
-								@endif
-							</td>
 						</tr>
 					@endforeach
 				</tbody>
@@ -124,4 +108,4 @@
 			<button type="submit" class="btn btn-default">Save Forum</button>
 		{{ Form::close() }}
 </div>
-@stop
+@endsection

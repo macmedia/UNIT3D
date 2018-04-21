@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -28,8 +28,7 @@ class Post extends Model
      *
      */
     public $rules = [
-        'title' => 'required',
-        'content' => 'required|min:100',
+        'content' => 'required',
         'user_id' => 'required',
         'topic_id' => 'required'
     ];
@@ -112,7 +111,7 @@ class Post extends Model
 
     public function getPageNumber()
     {
-        $result = ($this->getPostNumber() - 1) / 15 + 1;
+        $result = ($this->getPostNumber() - 1) / 25 + 1;
         $result = floor($result);
         return $result;
     }

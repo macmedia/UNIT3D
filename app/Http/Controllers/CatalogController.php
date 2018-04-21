@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -15,8 +15,6 @@ namespace App\Http\Controllers;
 use App\CatalogTorrent;
 use App\Catalog;
 use App\Torrent;
-
-use Illuminate\Support\Facades\Auth;
 
 class CatalogController extends Controller
 {
@@ -44,9 +42,9 @@ class CatalogController extends Controller
      */
     public function catalog($slug, $id)
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $catalog = Catalog::findOrFail($id);
-        $records = CatalogTorrent::where('catalog_id', '=', $id)->orderBy('imdb', 'DESC')->get();
+        $records = CatalogTorrent::where('catalog_id', $id)->latest('imdb')->get();
 
         return view('catalogs.catalog', ['user' => $user, 'catalog' => $catalog, 'records' => $records]);
     }
@@ -61,8 +59,8 @@ class CatalogController extends Controller
      */
     public function torrents($imdb)
     {
-        $user = Auth::user();
-        $torrents = Torrent::where('imdb', '=', $imdb)->orderBy('size', 'DESC')->get();
+        $user = auth()->user();
+        $torrents = Torrent::where('imdb', $imdb)->latest('size')->get();
 
         return view('catalogs.torrents', ['torrents' => $torrents, 'user' => $user]);
     }

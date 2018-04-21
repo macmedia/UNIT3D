@@ -1,8 +1,8 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('poll.polls') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ trans('poll.polls') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -10,7 +10,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('poll.polls') }}</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="box container">

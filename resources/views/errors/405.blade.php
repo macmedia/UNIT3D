@@ -3,14 +3,14 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Error 405: Method Not Allowed! - {{ Config::get('other.title') }}</title>
+  <title>Error 405: Method Not Allowed! - {{ config('other.title') }}</title>
 
   <!-- Meta -->
   @section('meta')
       <meta http-equiv="x-ua-compatible" content="ie=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="{{ $exception->getMessage() }}">
-      <meta property="og:title" content="{{ Config::get('other.title') }}">
+      <meta property="og:title" content="{{ config('other.title') }}">
       <meta property="og:type" content="website">
       <meta property="og:image" content="{{ url('/img/rlm.png') }}">
       <meta property="og:url" content="{{ url('/') }}">
@@ -34,8 +34,10 @@
 
 <body>
   <section class="container content" id="content-area" style="min-height: 344px;">
-   <h2>{{ $exception->getMessage() }}</h2>
-    <div class="jumbotron shadowed">
+      @if(auth()->user()->group->is_modo)
+      <h2>{{ $exception->getMessage() }}</h2>
+      @endif
+      <div class="jumbotron shadowed">
       <div class="container">
         <h1 class="mt-5 text-center">
           <i class="fa fa-exclamation-circle text-warning"></i> Error 405: Method Not Allowed!

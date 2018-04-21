@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-	<title>Failed Login Log - Staff Dashboard - {{ Config::get('other.title') }}</title>
-@stop
+	<title>Failed Login Log - Staff Dashboard - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 	<meta name="description" content="Invites Log - Staff Dashboard">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -19,7 +19,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">Failed Login Log</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -52,7 +52,7 @@
         {{ $attempt->user_id }}
       </td>
       <td>
-        <a class="view-user" data-id="{{ $attempt->user_id }}" data-slug="{{ $attempt->username }}" href="{{ route('profil', ['username' =>  $attempt->username, 'id' => $attempt->user_id]) }}">{{ $attempt->username }}</a>
+        <a class="view-user" data-id="{{ $attempt->user_id }}" data-slug="{{ $attempt->username }}" href="{{ route('profile', ['username' =>  $attempt->username, 'id' => $attempt->user_id]) }}">{{ $attempt->username }}</a>
       </td>
       <td>
         {{ $attempt->ip_address }}
@@ -70,4 +70,4 @@
 {{ $attempts->links() }}
 </div>
 </div>
-@stop
+@endsection

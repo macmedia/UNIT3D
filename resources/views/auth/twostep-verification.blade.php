@@ -1,16 +1,16 @@
 @extends('layout.default')
 
 @section('title')
-	<title>{{ trans('auth.title') }} - {{ Config::get('other.title') }}</title>
-@stop
+	<title>{{ trans('auth.title') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
-	<meta name="description" content="{{ trans('auth.title') }} - {{ Config::get('other.title') }}">
-@stop
+	<meta name="description" content="{{ trans('auth.title') }} - {{ config('other.title') }}">
+@endsection
 
 @section('stylesheets')
 <link rel="stylesheet" href="{{ url('css/main/twostep.css') }}">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -18,7 +18,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('auth.title') }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @php
 switch ($remainingAttempts) {
@@ -149,4 +149,4 @@ switch ($remainingAttempts) {
 
 @section('javascripts')
 <script type="text/javascript" src="{{ url('js/twostep.js') }}"></script>
-@stop
+@endsection

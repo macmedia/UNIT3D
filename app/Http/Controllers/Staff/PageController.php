@@ -6,19 +6,16 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Page;
-
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
+use \Toastr;
 
 class PageController extends Controller
 {
@@ -40,20 +37,20 @@ class PageController extends Controller
      *
      *
      */
-    public function add()
+    public function add(Request $request)
     {
-        if (Request::getMethod() == 'POST') {
+        if ($request->isMethod('POST')) {
             $page = new Page();
-            $page->name = Request::get('name');
+            $page->name = $request->input('name');
             $page->slug = str_slug($page->name);
-            $page->content = Request::get('content');
+            $page->content = $request->input('content');
 
-            $v = Validator::make($page->toArray(), ['name' => 'required', 'slug' => 'required', 'content' => 'required']);
+            $v = validator($page->toArray(), ['name' => 'required', 'slug' => 'required', 'content' => 'required']);
             if ($v->passes()) {
                 $page->save();
-                return Redirect::route('staff_page_index');
+                return redirect()->route('staff_page_index')->with(Toastr::success('Page has been created successfully', 'Yay!', ['options']));
             } else {
-                Session::put('message', 'An error has occurred');
+                return redirect()->back()->with(Toastr::error('Page failed to save', 'Whoops!', ['options']));
             }
         }
         return view('Staff.page.add');
@@ -64,20 +61,20 @@ class PageController extends Controller
      *
      *
      */
-    public function edit($slug, $id)
+    public function edit(Request $request, $slug, $id)
     {
         $page = Page::findOrFail($id);
-        if (Request::getMethod() == 'POST') {
-            $page->name = Request::get('name');
+        if ($request->isMethod('POST')) {
+            $page->name = $request->input('name');
             $page->slug = str_slug($page->name);
-            $page->content = Request::get('content');
+            $page->content = $request->input('content');
 
-            $v = Validator::make($page->toArray(), ['name' => 'required', 'slug' => 'required', 'content' => 'required']);
+            $v = validator($page->toArray(), ['name' => 'required', 'slug' => 'required', 'content' => 'required']);
             if ($v->passes()) {
                 $page->save();
-                return Redirect::route('staff_page_index')->with('message', 'Page edited successfully');
+                return redirect()->route('staff_page_index')->with(Toastr::success('Page has been edited successfully', 'Yay!', ['options']));
             } else {
-                Session::put('message', 'An error has occurred');
+                return redirect()->back()->with(Toastr::error('Page failed to save', 'Whoops!', ['options']));
             }
         }
         return view('Staff.page.edit', ['page' => $page]);
@@ -91,6 +88,6 @@ class PageController extends Controller
     public function delete($slug, $id)
     {
         Page::findOrFail($id)->delete();
-        return Redirect::route('staff_page_index')->with('message', 'Page successfully deleted');
+        return redirect()->route('staff_page_index')->with(Toastr::success('Page has been deleted successfully', 'Yay!', ['options']));
     }
 }

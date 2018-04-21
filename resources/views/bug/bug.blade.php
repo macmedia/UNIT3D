@@ -6,7 +6,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('bug.bug-report') }}</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -15,19 +15,20 @@
         <h4 class="text-center">{{ trans('bug.bug-report-description') }}</h4></div>
         <table class="table table-bordered">
           <tbody>
-            {{ Form::open(array('route' => 'bug')) }}
+            <form role="form" method="POST" action="{{ route('bug') }}">
+            {{ csrf_field() }}
             <tr>
               <td class="rowhead">{{ trans('common.reporter') }}:</td>
               <td>{{ trans('bug.enter-username') }}
                 <br>
-                <input type="text" class="form-control" name="username" value="{{ Auth::user()->username }}" size="60" required>
+                <input type="text" class="form-control" name="username" value="{{ auth()->user()->username }}" size="60" required>
               </td>
             </tr>
             <tr>
               <td class="rowhead">{{ trans('common.email') }}:</td>
               <td>{{ trans('bug.enter-email') }}
                 <br>
-                <input type="email" class="form-control" name="email" value="{{ Auth::user()->email }}" size="60" required>
+                <input type="email" class="form-control" name="email" value="{{ auth()->user()->email }}" size="60" required>
               </td>
             </tr>
             <tr>
@@ -61,9 +62,9 @@
                 <button class="btn btn-labeled btn-danger" type="submit"><span class="btn-label"><i class="fa fa-bug"></i></span>{{ trans('common.submit') }}</button>
               </td>
             </tr>
-            {{ Form::close() }}
+            </form>
           </tbody>
         </table>
     </div>
 </div>
-@stop
+@endsection

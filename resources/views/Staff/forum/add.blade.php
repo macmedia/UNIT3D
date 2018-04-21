@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-	<title>Add Forums - Staff Dashboard - {{ Config::get('other.title') }}</title>
-@stop
+	<title>Add Forums - Staff Dashboard - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 	<meta name="description" content="Add Forums - Staff Dashboard">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -19,7 +19,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">Add Forums</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container box">
@@ -70,8 +70,6 @@
 						<th>Read topics</th>
 						<th>Start new topic</th>
 						<th>Reply to topics</th>
-						<th>Upload</th>
-						<th>Download</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -82,8 +80,6 @@
 							<td><input type="checkbox" name="permissions[{{ $g->id }}][read_topic]" value="1"></td>
 							<td><input type="checkbox" name="permissions[{{ $g->id }}][start_topic]" value="1"></td>
 							<td><input type="checkbox" name="permissions[{{ $g->id }}][reply_topic]" value="1"></td>
-							<td><input type="checkbox" name="permissions[{{ $g->id }}][upload]" value="1"></td>
-							<td><input type="checkbox" name="permissions[{{ $g->id }}][download]" value="1"></td>
 						</tr>
 					@endforeach
 				</tbody>
@@ -92,4 +88,4 @@
 			<button type="submit" class="btn btn-default">Save Forum</button>
 		{{ Form::close() }}
 </div>
-@stop
+@endsection

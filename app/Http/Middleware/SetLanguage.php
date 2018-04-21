@@ -6,18 +6,15 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Http\Middleware;
 
 use App;
-use Auth;
 use Closure;
-
 use App\Language;
-
 use Carbon\Carbon;
 
 class SetLanguage
@@ -65,7 +62,7 @@ class SetLanguage
 
     public function setUserLocale()
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
         if ($user->locale) {
             $this->setLocale($user->locale);
@@ -93,7 +90,7 @@ class SetLanguage
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::check()) {
+        if (auth()->check()) {
             $this->setUserLocale();
         } else {
             $this->setSystemLocale($request);

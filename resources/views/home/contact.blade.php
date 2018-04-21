@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-	<title>{{ trans('common.contact') }} - {{ Config::get('other.title') }}</title>
-@stop
+	<title>{{ trans('common.contact') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
-	<meta name="description" content="{{ trans('common.contact') }} {{ Config::get('other.title') }}.">
-@stop
+	<meta name="description" content="{{ trans('common.contact') }} {{ config('other.title') }}.">
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -14,20 +14,20 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('common.contact') }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container box">
 <div class="row">
 	<div class="col-md-4 box centered-form">
-		{{ Form::open(array('route' => 'contact')) }}
+		<form role="form" method="POST" action="{{ route('contact') }}">
 		{{ csrf_field() }}
 			<div class="form-group">
-				<input type="text" name="contact-name" placeholder="{{ trans('common.name') }}" class="form-control" required>
+				<input type="text" name="contact-name" placeholder="{{ trans('common.name') }}" value="{{ auth()->user()->username }}" class="form-control" required>
 			</div>
 
 			<div class="form-group">
-				<input type="email" name="email" placeholder="{{ trans('common.email') }}" class="form-control" required>
+				<input type="email" name="email" placeholder="{{ trans('common.email') }}" value="{{ auth()->user()->email }}" class="form-control" required>
 			</div>
 
 			<div class="form-group">
@@ -35,7 +35,7 @@
 			</div>
 
 			<button type="submit" class="btn btn-lg btn-primary btn-block">{{ trans('common.submit') }}</button>
-		{{ Form::close() }}
+		</form>
 	</div>
 
 	<div class="col-sm-8">
@@ -46,4 +46,4 @@
 	</div>
 </div>
 </div>
-@stop
+@endsection

@@ -2,11 +2,11 @@
 
 @section('breadcrumb')
 <li class="active">
-    <a href="{{ route('outbox', array('username' => Auth::user()->username, 'id' => Auth::user()->id)) }}">
+    <a href="{{ route('outbox', array('username' => auth()->user()->username, 'id' => auth()->user()->id)) }}">
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('pm.outbox') }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -18,11 +18,11 @@
         <div class="row">
           <div class="col-md-2">
             <div class="block">
-              <a href="{{ route('create', array('username' => Auth::user()->username, 'id' => Auth::user()->id)) }}" class="btn btn-primary btn-block">{{ trans('pm.new') }}</a>
+              <a href="{{ route('create', array('username' => auth()->user()->username, 'id' => auth()->user()->id)) }}" class="btn btn-primary btn-block">{{ trans('pm.new') }}</a>
               <div class="separator"></div>
               <div class="list-group">
-                <a href="{{ route('inbox', array('username' => Auth::user()->username, 'id' => Auth::user()->id)) }}" class="btn btn-primary btn-block">{{ trans('pm.inbox') }}</a>
-                <a href="{{ route('outbox', array('username' => Auth::user()->username, 'id' => Auth::user()->id)) }}" class="btn btn-primary btn-block">{{ trans('pm.outbox') }}</a>
+                <a href="{{ route('inbox', array('username' => auth()->user()->username, 'id' => auth()->user()->id)) }}" class="btn btn-primary btn-block">{{ trans('pm.inbox') }}</a>
+                <a href="{{ route('outbox', array('username' => auth()->user()->username, 'id' => auth()->user()->id)) }}" class="btn btn-primary btn-block">{{ trans('pm.outbox') }}</a>
               </div>
             </div>
           </div>
@@ -39,13 +39,11 @@
             </thead>
             <tbody>
               @foreach($pms as $p)
-              {{ Form::hidden('invisible', 'id', array('id' => 'id')) }}
               <tr>
-                <td class="col-sm-2"><a href="{{ route('profil', ['username' => $p->receiver->username, 'id' => $p->receiver->id]) }}" title="">{{ $p->receiver->username}}</a></td>
+                <td class="col-sm-2"><a href="{{ route('profile', ['username' => $p->receiver->username, 'id' => $p->receiver->id]) }}" title="">{{ $p->receiver->username}}</a></td>
                 <td class="col-sm-5"><a href="{{ route('message', ['username' => $user->username , 'id' => $user->id , 'pmid' => $p->id]) }}">{{ $p->subject }}</a></td>
                 <td class="col-sm-2">{{ $p->created_at->diffForHumans() }}</td>
               </tr>
-              {{ Form::close() }}
               @endforeach
             </tbody>
           </table>
@@ -54,4 +52,4 @@
       </div>
     </div>
     </div>
-  @stop
+  @endsection

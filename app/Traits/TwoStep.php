@@ -6,44 +6,39 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Traits;
 
-use Auth;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\TwoStepAuth;
 use App\Notifications\TwoStepAuthCode;
+use Carbon\Carbon;
 
 trait TwoStep
 {
     /**
      * Check if the user is authorized
      *
-     * @param  Request $request
-     *
      * @return boolean
      */
-     public function twoStepVerification($request)
-     {
-         $user = Auth::User();
-         if ($user) {
-             $twoStepAuthStatus = $this->checkTwoStepAuthStatus($user->id);
-             if ($twoStepAuthStatus->authStatus !== true) {
-                 return false;
-             } else {
-                 if ($this->checkTimeSinceVerified($twoStepAuthStatus)) {
-                     return false;
-                 }
-             }
-             return true;
-         }
-         return true;
-     }
+    private function twoStepVerification()
+    {
+        $user = auth()->user();
+        if ($user) {
+            $twoStepAuthStatus = $this->checkTwoStepAuthStatus($user->id);
+            if ($twoStepAuthStatus->authStatus !== true) {
+                return false;
+            } else {
+                if ($this->checkTimeSinceVerified($twoStepAuthStatus)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return true;
+    }
 
     /**
      * Check time since user was last verified and take apprpriate action
@@ -99,8 +94,8 @@ trait TwoStep
      */
     private function generateCode(int $length = 4, string $prefix = '', string $suffix = '')
     {
-        for($i = 0; $i < $length; $i++){
-            $prefix .= random_int(0,1) ? chr(random_int(65, 90)) : random_int(0, 9);
+        for ($i = 0; $i < $length; $i++) {
+            $prefix .= random_int(0, 1) ? chr(random_int(65, 90)) : random_int(0, 9);
         }
 
         return $prefix . $suffix;
@@ -226,7 +221,7 @@ trait TwoStep
      */
     protected function sendVerificationCodeNotification($twoStepAuth, $deliveryMethod = null)
     {
-        $user = Auth::User();
+        $user = auth()->user();
         if ($deliveryMethod === null) {
             $user->notify(new TwoStepAuthCode($user, $twoStepAuth->authCode));
         }

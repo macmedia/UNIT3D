@@ -6,17 +6,13 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     Mr.G
  */
 
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Validator;
-
 use App\Peer;
 use App\History;
 use \Toastr;
@@ -33,7 +29,7 @@ class FlushController extends Controller
         // Deleting old peers from the database
         foreach (Peer::all() as $peer) {
             if ((time() - strtotime($peer->updated_at)) > (60 * 60)) {
-                $history = History::where("info_hash", "=", $peer->info_hash)->where("user_id", "=", $peer->user_id)->first();
+                $history = History::where("info_hash", $peer->info_hash)->where("user_id", $peer->user_id)->first();
                 if ($history) {
                     $history->active = false;
                     $history->save();
@@ -41,6 +37,6 @@ class FlushController extends Controller
                 $peer->delete();
             }
         }
-        return redirect('staff_dashboard')->with(Toastr::success('Ghost Peers Have Been Flushed', 'Success!', ['options']));
+        return redirect('staff_dashboard')->with(Toastr::success('Ghost Peers Have Been Flushed', 'Yay!', ['options']));
     }
 }

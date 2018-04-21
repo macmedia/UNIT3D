@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -15,7 +15,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Traits\TwoStep;
 
 class TwoStepAuth
@@ -30,12 +29,12 @@ class TwoStepAuth
      *
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         $response   = $next($request);
         $uri        = $request->path();
         $nextUri    = config('app.url') . '/' .  $uri;
-        $user = Auth::user();
+        $user = auth()->user();
 
         switch ($uri) {
             case 'verification/needed':

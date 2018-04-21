@@ -16,7 +16,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">Edit Torrent Category</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container box">
@@ -25,6 +25,10 @@
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" class="form-control" name="name" value="{{ $category->name }}">
+            </div>
+            <div class="form-group">
+                <label for="name">Position</label>
+                <input type="text" class="form-control" name="position" value="{{ $category->position }}">
             </div>
             <div class="form-group">
                 <label for="name">Icon (FontAwesome)</label>
@@ -42,4 +46,4 @@
             <button type="submit" class="btn btn-default">{{ trans('common.submit') }}</button>
         {{ Form::close() }}
 </div>
-@stop
+@endsection

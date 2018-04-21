@@ -6,17 +6,14 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\PrivateMessage;
 use App\Report;
 use \Toastr;
@@ -30,7 +27,7 @@ class ReportController extends Controller
      */
     public function getReports()
     {
-        $reports = Report::orderBy('created_at', 'DESC')->get();
+        $reports = Report::latest()->paginate(25);
 
         return view('Staff.reports.index', ['reports' => $reports]);
     }
@@ -42,11 +39,11 @@ class ReportController extends Controller
         return view('Staff.reports.report', ['report' => $report]);
     }
 
-    public function solveReport($report_id)
+    public function solveReport(Request $request, $report_id)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
-        $v = Validator::make(Request::all(), [
+        $v = validator($request->all(), [
             'verdict' => 'required|min:3',
             'staff_id' => 'required'
         ]);
@@ -57,15 +54,14 @@ class ReportController extends Controller
             return redirect()->route('getReports')->with(Toastr::error('This Report Has Already Been Solved', 'Whoops!', ['options']));
         }
 
-        $report->verdict = Request::get('verdict');
+        $report->verdict = $request->input('verdict');
         $report->staff_id = $user->id;
         $report->solved = 1;
         $report->save();
 
-        // Insert the Recipient notification below
+        // Send Private Message
         PrivateMessage::create(['sender_id' => $user->id, 'reciever_id' => $report->reporter_id, 'subject' => "Your Report Has A New Verdict", 'message' => $report->verdict]);
-        // End insert recipient notification here
 
-        return redirect()->route('getReports')->with(Toastr::success('Report has been successfully resolved', 'Success!', ['options']));
+        return redirect()->route('getReports')->with(Toastr::success('Report has been successfully resolved', 'Yay!', ['options']));
     }
 }

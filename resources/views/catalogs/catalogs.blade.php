@@ -1,8 +1,8 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('torrent.catalogs') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ trans('torrent.catalogs') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -10,7 +10,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('torrent.catalogs') }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container box">
@@ -27,4 +27,4 @@
         @endforeach
     </div>
 </div>
-@stop
+@endsection

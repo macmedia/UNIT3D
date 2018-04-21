@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -59,12 +59,12 @@ Route::group(['middleware' => 'language'], function () {
         //Route::get('/rss/{passkey}/download/{id}','RssController@download')->name('rssDownload');
     });
 
-/*
-|------------------------------------------
-| Website (When Authorized)
-|------------------------------------------
-*/
-    Route::group(['middleware' => ['auth', 'twostep']], function () {
+    /*
+    |------------------------------------------
+    | Website (When Authorized)
+    |------------------------------------------
+    */
+    Route::group(['middleware' => ['auth', 'twostep', 'online', 'banned', 'active', 'private']], function () {
 
         // Two Step Auth
         Route::get('/twostep/needed', 'Auth\TwoStepController@showVerification')->name('verificationNeeded');
@@ -108,6 +108,9 @@ Route::group(['middleware' => 'language'], function () {
 
         // Staff List
         Route::any('/staff', 'PageController@staff')->name('staff');
+
+        // Internal List
+        Route::any('/internal', 'PageController@internal')->name('internal');
 
         // Black List
         Route::any('/blacklist', 'PageController@blacklist')->name('blacklist');
@@ -161,6 +164,7 @@ Route::group(['middleware' => 'language'], function () {
         Route::any('/deletePM/{pmid}', 'PrivateMessageController@deletePrivateMessage')->name('delete-pm');
 
         // Requests
+        Route::any('filterRequests', 'RequestController@faceted');
         Route::get('/requests', 'RequestController@requests')->name('requests');
         Route::any('/request/add', 'RequestController@addrequest')->name('add_request');
         Route::any('/request/{id}/edit', 'RequestController@editrequest')->name('edit_request');
@@ -170,12 +174,11 @@ Route::group(['middleware' => 'language'], function () {
         Route::any('/request/{id}/fill', 'RequestController@fillRequest')->name('fill_request');
         Route::any('/request/{id}/reject', 'RequestController@rejectRequest')->name('rejectRequest');
         Route::any('/request/{id}/vote', 'RequestController@addBonus')->name('add_votes');
-        Route::get('/requests/search', 'RequestController@search')->name('request_search');
         Route::any('/request/{id}/claim', 'RequestController@claimRequest')->name('claimRequest');
         Route::any('/request/{id}/unclaim', 'RequestController@unclaimRequest')->name('unclaimRequest');
 
         // Torrent
-        Route::any('filter', 'TorrentController@faceted');
+        Route::any('filterTorrents', 'TorrentController@faceted');
         Route::get('/torrents', 'TorrentController@torrents')->name('torrents');
         Route::get('/torrents/{slug}.{id}', 'TorrentController@torrent')->name('torrent');
         Route::get('/torrents/{slug}.{id}/peers', 'TorrentController@peers')->name('peers');
@@ -184,8 +187,7 @@ Route::group(['middleware' => 'language'], function () {
         Route::get('/download_check/{slug}.{id}', 'TorrentController@downloadCheck')->name('download_check');
         Route::get('/download/{slug}.{id}', 'TorrentController@download')->name('download');
         Route::get('/poster', 'TorrentController@poster')->name('poster');
-        Route::post('/torrents/{id}/delete', 'TorrentController@deleteTorrent')->name('delete');
-        Route::get('/torrents/{id}/delete', 'TorrentController@deleteTorrent')->name('delete');
+        Route::post('/torrents/delete', 'TorrentController@deleteTorrent')->name('delete');
         Route::any('/torrents/{slug}.{id}/edit', 'TorrentController@edit')->name('edit');
         Route::any('/torrents/{slug}.{id}/torrent_fl', 'TorrentController@grantFL')->name('torrent_fl');
         Route::any('/torrents/{slug}.{id}/torrent_doubleup', 'TorrentController@grantDoubleUp')->name('torrent_doubleup');
@@ -196,14 +198,15 @@ Route::group(['middleware' => 'language'], function () {
         Route::any('/torrents/{slug}.{id}/reseed', 'TorrentController@reseedTorrent')->name('reseed');
         Route::any('/torrents/{slug}.{id}/tip_uploader', 'BonusController@tipUploader')->name('tip_uploader');
         Route::any('/torrents/{slug}.{id}/freeleech_token', 'TorrentController@freeleechToken')->name('freeleech_token');
+        Route::get('torrents/grouping/categories', 'TorrentController@groupingCategories')->name('grouping_categories');
+        Route::get('torrents/grouping/{category_id}', 'TorrentController@groupingLayout')->name('grouping');
+        Route::get('torrents/grouping/{category_id}/{imdb}', 'TorrentController@groupingResults')->name('grouping_results');
 
         // User
-        Route::get('/lockscreen', 'LockAccountController@lockscreen')->name('lock');
-        Route::post('/lockscreen', 'LockAccountController@unlock')->name('unlock');
         Route::get('/members', 'UserController@members')->name('members');
         Route::any('/members/results', 'UserController@userSearch')->name('userSearch');
-        Route::get('/{username}.{id}', 'UserController@profil')->name('profil');
-        Route::any('/{username}.{id}/edit', 'UserController@editProfil')->name('user_edit_profil');
+        Route::get('/{username}.{id}', 'UserController@profile')->name('profile');
+        Route::any('/{username}.{id}/edit', 'UserController@editProfile')->name('user_edit_profile');
         Route::post('/{username}.{id}/photo', 'UserController@changePhoto')->name('user_change_photo');
         Route::get('/{username}.{id}/activate/{token}', 'UserController@activate')->name('user_activate');
         Route::post('/{username}.{id}/about', 'UserController@changeAbout')->name('user_change_about');
@@ -260,24 +263,24 @@ Route::group(['middleware' => 'language'], function () {
         Route::any('/notification/delete', 'NotificationController@deleteAll')->name('delete_notifications');
     });
 
-/*
-|------------------------------------------
-| ShoutBox Routes Group (when authorized)
-|------------------------------------------
-*/
-    Route::group(['prefix' => 'shoutbox', 'middleware' => 'auth'], function () {
+    /*
+    |------------------------------------------
+    | ShoutBox Routes Group (when authorized)
+    |------------------------------------------
+    */
+    Route::group(['prefix' => 'shoutbox', 'middleware' => ['auth', 'twostep', 'online', 'banned', 'active', 'private']], function () {
         Route::get('/', 'HomeController@home')->name('shoutbox-home');
         Route::get('/messages/{after?}', 'ShoutboxController@pluck')->name('shoutbox-fetch');
         Route::post('/send', 'ShoutboxController@send')->name('shoutbox-send');
         Route::get('/delete/{id}', 'ShoutboxController@deleteShout')->name('shout-delete');
     });
 
-/*
-|------------------------------------------
-| Community Routes Group (when authorized)
-|------------------------------------------
-*/
-    Route::group(['prefix' => 'forums', 'middleware' => 'auth'], function () {
+    /*
+    |------------------------------------------
+    | Community Routes Group (when authorized)
+    |------------------------------------------
+    */
+    Route::group(['prefix' => 'forums', 'middleware' => ['auth', 'twostep', 'online', 'banned', 'active', 'private']], function () {
         // Display Forum Index
         Route::get('/', 'ForumController@index')->name('forum_index');
         // Search Forums
@@ -324,12 +327,12 @@ Route::group(['middleware' => 'language'], function () {
     });
 
 
-/*
-|-----------------------------------------------------------------
-| Staff Dashboard Routes Group (when authorized and a staff group)
-|-----------------------------------------------------------------
-*/
-    Route::group(['prefix' => 'staff_dashboard', 'middleware' => ['auth', 'modo'], 'namespace' => 'Staff'], function () {
+    /*
+    |-----------------------------------------------------------------
+    | Staff Dashboard Routes Group (when authorized and a staff group)
+    |-----------------------------------------------------------------
+    */
+    Route::group(['prefix' => 'staff_dashboard', 'middleware' => ['auth', 'twostep', 'modo', 'online', 'banned', 'active', 'private'], 'namespace' => 'Staff'], function () {
 
         // Staff Dashboard
         Route::any('/', 'HomeController@home')->name('staff_dashboard');
@@ -354,8 +357,9 @@ Route::group(['middleware' => 'language'], function () {
         // Moderation
         Route::any('/torrents', 'TorrentController@index')->name('staff_torrent_index');
         Route::get('/moderation', 'ModerationController@moderation')->name('moderation');
-        Route::get('/modertaion/{slug}.{id}/approve', 'ModerationController@approve')->name('moderation_approve');
-        Route::get('/modertaion/{slug}.{id}/reject', 'ModerationController@reject')->name('moderation_reject');
+        Route::get('/moderation/{slug}.{id}/approve', 'ModerationController@approve')->name('moderation_approve');
+        Route::post('/moderation/reject', 'ModerationController@reject')->name('moderation_reject');
+        Route::post('/moderation/postpone', 'ModerationController@postpone')->name('moderation_postpone');
         Route::any('/torrent_search', 'TorrentController@search')->name('torrent-search');
 
         // Request section
@@ -406,20 +410,11 @@ Route::group(['middleware' => 'language'], function () {
         Route::any('/pages/edit/{slug}.{id}', 'PageController@edit')->name('staff_page_edit');
         Route::get('/pages/delete/{slug}.{id}', 'PageController@delete')->name('staff_page_delete');
 
-        // Settings
-        Route::any('/settings', 'SettingsController@index')->name('staff_settings_index');
-
         // Articles
         Route::any('/articles', 'ArticleController@index')->name('staff_article_index');
         Route::any('/articles/new', 'ArticleController@add')->name('staff_article_add');
         Route::any('/articles/edit/{slug}.{id}', 'ArticleController@edit')->name('staff_article_edit');
         Route::any('/articles/delete/{slug}.{id}', 'ArticleController@delete')->name('staff_article_delete');
-
-        // Bugs
-        Route::any('/bug', 'BugController@index')->name('staff_bug_index');
-
-        // Blocks
-        Route::any('/blocks', 'BlockController@index')->name('staff_blocks_index');
 
         // Groups
         Route::any('/groups', 'GroupsController@index')->name('staff_groups_index');

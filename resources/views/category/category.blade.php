@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ $category->name }} {{ trans('torrent.category') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ $category->name }} {{ trans('torrent.category') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 <meta name="description" content="{{ $category->name }}">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -19,7 +19,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ $category->name }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container box">
@@ -80,7 +80,7 @@
           <time datetime="{{ date('Y-m-d H:m:s', strtotime($t->created_at)) }}">{{$t->created_at->diffForHumans()}}</time>
         </td>
         <td><span class="badge-extra text-blue text-bold">{{ $t->getSize() }}</span></td>
-        <td><span class="badge-extra text-orange text-bold">{{ $t->times_completed }} {{ trans('common.times') }}</span></td>
+        <td><span class="badge-extra text-orange text-bold">{{ $t->times_completed }} {{ strtolower(trans('common.times')) }}</span></td>
         <td><span class="badge-extra text-green text-bold">{{ $t->seeders }}</span></td>
         <td><span class="badge-extra text-red text-bold">{{ $t->leechers }}</span></td>
       </tr>
@@ -91,4 +91,4 @@
 </div>
 </div>
 </div>
-@stop
+@endsection

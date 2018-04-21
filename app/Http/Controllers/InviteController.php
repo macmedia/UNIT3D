@@ -6,26 +6,17 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Http\Controllers;
 
-use App\Mail\InviteUser;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use App\User;
 use App\Invite;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Contracts\Auth\Authenticatable;
-use App\Http\Requests\ValidateSecretRequest;
-use Illuminate\Support\Facades\Input;
-
+use App\Mail\InviteUser;
 use \Toastr;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
@@ -35,12 +26,12 @@ class InviteController extends Controller
 
     public function invite()
     {
-        $user = Auth::user();
+        $user = auth()->user();
         if (config('other.invite-only') == false) {
-            Toastr::warning('Invitations Are Disabled Due To Open Registration!', 'Error!', ['options']);
+            Toastr::error('Invitations Are Disabled Due To Open Registration!', 'Whoops!', ['options']);
         }
         if ($user->can_invite == 0) {
-            Toastr::warning('Your Invite Rights Have Been Revoked!!!', 'Error!', ['options']);
+            Toastr::error('Your Invite Rights Have Been Revoked!!!', 'Whoops!', ['options']);
         }
         return view('user.invite', ['user' => $user]);
     }
@@ -48,11 +39,16 @@ class InviteController extends Controller
     public function process(Request $request)
     {
         $current = new Carbon();
-        $user = Auth::user();
-        $exsist = Invite::where('email', '=', $request->get('email'))->first();
-        $member = User::where('email', '=', $request->get('email'))->first();
+        $user = auth()->user();
+        $invites_restricted = config('config.invites_restriced', false);
+        $invite_groups = config('config.invite_groups', []);
+        if ($invites_restricted && !in_array($user->group->name, $invite_groups)) {
+            return redirect()->route('invite')->with(Toastr::error('Invites are currently disabled for your userclass.', 'Whoops!', ['options']));
+        }
+        $exsist = Invite::where('email', $request->input('email'))->first();
+        $member = User::where('email', $request->input('email'))->first();
         if ($exsist || $member) {
-            return Redirect::route('profil', ['username' => $user->username, 'id' => $user->id])->with(Toastr::error('The email address your trying to send a invite to has already been sent one or is a user already.', 'My Dude!', ['options']));
+            return redirect()->route('invite')->with(Toastr::error('The email address your trying to send a invite to has already been sent one or is a user already.', 'Whoops!', ['options']));
         }
 
         if ($user->invites > 0) {
@@ -62,35 +58,36 @@ class InviteController extends Controller
             //create a new invite record
             $invite = Invite::create([
                 'user_id' => $user->id,
-                'email' => $request->get('email'),
+                'email' => $request->input('email'),
                 'code' => $code,
-                'expires_on' => $current->copy()->addDays(14),
-                'custom' => $request->get('message'),
+                'expires_on' => $current->copy()->addDays(config('other.invite_expire')),
+                'custom' => $request->input('message'),
             ]);
 
             // send the email
-            Mail::to($request->get('email'))->send(new InviteUser($invite));
+            Mail::to($request->input('email'))->send(new InviteUser($invite));
 
             // subtract 1 invite
             $user->invites -= 1;
             $user->save();
 
-            Toastr::success('Invitation Sent Successfully!', 'Yay!', ['options']);
+            // Activity Log
+            \LogActivity::addToLog("Member {$user->username} has sent a invite to {$invite->email} .");
+
+            return redirect()->route('invite')->with(Toastr::success('Invite was sent successfully!', 'Yay!', ['options']));
         } else {
-            Toastr::warning('You Dont Have Enough Invites!', 'Umm!', ['options']);
+            return redirect()->route('invite')->with(Toastr::error('You do not have enough invites!', 'Whoops!', ['options']));
         }
-        // redirect back where we came from
-        return redirect()->back();
     }
 
     public function inviteTree($username, $id)
     {
-        if (Auth::user()->group->is_modo) {
+        if (auth()->user()->group->is_modo) {
             $user = User::findOrFail($id);
-            $records = Invite::with('sender')->where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+            $records = Invite::with('sender')->where('user_id', $user->id)->latest()->get();
         } else {
-            $user = Auth::user();
-            $records = Invite::with('sender')->where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+            $user = auth()->user();
+            $records = Invite::with('sender')->where('user_id', $user->id)->latest()->get();
         }
         return view('user.invitetree', ['user' => $user, 'records' => $records]);
     }

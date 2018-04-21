@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('torrent.torrents') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ trans('torrent.torrents') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
-<meta name="description" content="{{ 'Torrents ' . Config::get('other.title') }}">
-@stop
+<meta name="description" content="{{ 'Torrents ' . config('other.title') }}">
+@endsection
 
 @section('breadcrumb')
 <li class="active">
@@ -14,7 +14,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('torrent.torrents') }}</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <!-- Search -->
@@ -29,6 +29,12 @@
     <label for="name" class="col-sm-1 label label-default">Name</label>
     <div class="col-sm-9">
       {{ Form::text('search',null,['id'=>'search','placeholder'=>'Name or Title','class'=>'form-control']) }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="uploader" class="col-sm-1 label label-default">Uploader</label>
+    <div class="col-sm-9">
+      {{ Form::text('uploader',null,['id'=>'uploader','placeholder'=>'Uploader Username','class'=>'form-control']) }}
     </div>
   </div>
   <div class="form-group">
@@ -138,8 +144,9 @@
 </div>
 <div style="float:right;">
   <strong>View:</strong>
-  <a href="{{ route('torrents') }}" class="btn btn-xs btn-primary"><i class="fa fa-list"></i> Lists</a>
-  <a href="{{ route('poster') }}" class="btn btn-xs btn-primary"><i class="fa fa-image"></i> Posters</a>
+  <a href="{{ route('torrents') }}" class="btn btn-xs btn-primary"><i class="fa fa-list"></i> List</a>
+  <a href="{{ route('poster') }}" class="btn btn-xs btn-primary"><i class="fa fa-image"></i> Poster</a>
+  <a href="{{ route('grouping_categories') }}" class="btn btn-xs btn-primary"><i class="fa fa-list"></i> Group</a>
 </div>
 </div>
 <!-- /Search -->
@@ -163,7 +170,7 @@
       </div>
   <div class="block">
   <center>
-     <h1 class="filter-title">Results</h1>
+     <h1 class="filter-title" id="count"></h1>
   </center>
   <div class="form-horizontal">
     <div class="form-group">
@@ -219,7 +226,7 @@
   <!-- /Results -->
 </div>
 </div>
-@stop
+@endsection
 
 @section('javascripts')
 <script>
@@ -227,6 +234,7 @@
         function faceted(page){
             var csrf = "{{ csrf_token() }}";
             var search = $("#search").val();
+            var uploader = $("#uploader").val();
             var imdb = $("#imdb").val();
             var tvdb = $("#tvdb").val();
             var tmdb = $("#tmdb").val();
@@ -306,13 +314,18 @@
             }
 
             xhr = $.ajax({
-                url: 'filter',
-                data: {_token:csrf,search:search,imdb:imdb,tvdb:tvdb,tmdb:tmdb,mal:mal,categories:categories,types:types,freeleech:freeleech,doubleupload:doubleupload,featured:featured,stream:stream,highspeed:highspeed,sd:sd,alive:alive,dying:dying,dead:dead,sorting:sorting,direction:direction,page:page,qty:qty},
+                url: 'filterTorrents',
+                data: {_token:csrf,search:search,uploader:uploader,imdb:imdb,tvdb:tvdb,tmdb:tmdb,mal:mal,categories:categories,types:types,freeleech:freeleech,doubleupload:doubleupload,featured:featured,stream:stream,highspeed:highspeed,sd:sd,alive:alive,dying:dying,dead:dead,sorting:sorting,direction:direction,page:page,qty:qty},
                 type: 'get',
                 beforeSend:function(){
                     $("#result").html('<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>')
                 }
             }).done(function(e){
+            if(e['count'] == 0){
+                $("#count").html('0 Result(s)');
+            } else {
+                $("#count").html(e['count'] +' Result(s)');
+            }
                 $("#result").html(e['result']);
                 pagination(e['rows'],e['qty'],e['active']);
             });
@@ -323,6 +336,11 @@
     </script>
     <script>
       $("#search").keyup(function(){
+        faceted();
+      })
+    </script>
+    <script>
+      $("#uploader").keyup(function(){
         faceted();
       })
     </script>
@@ -387,4 +405,4 @@
             $("#a"+(parseInt(active))).addClass('active');
         }
     </script>
-@stop
+@endsection

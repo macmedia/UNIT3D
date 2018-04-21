@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -75,5 +75,14 @@ class Poll extends Model
         $slug = strlen($title) > 20 ? substr(str_slug($title), 0, 20) : str_slug($title);
         $count = $this->where('slug', 'LIKE', "%$slug%")->count();
         return $count ? "{$slug}-{$count}" : $slug;
+    }
+
+    public function totalVotes()
+    {
+        $result = 0;
+        foreach ($this->options as $option) {
+            $result += $option->votes;
+        }
+        return $result;
     }
 }

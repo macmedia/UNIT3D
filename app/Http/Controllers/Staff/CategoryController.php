@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -14,11 +14,7 @@ namespace App\Http\Controllers\Staff;
 
 use App\Category;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Http\Request;
 use \Toastr;
 
 class CategoryController extends Controller
@@ -31,7 +27,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::all()->sortBy('position');
 
         return view('Staff.category.index', ['categories' => $categories]);
     }
@@ -41,20 +37,21 @@ class CategoryController extends Controller
      *
      *
      */
-    public function add()
+    public function add(Request $request)
     {
-        if (Request::isMethod('post')) {
+        if ($request->isMethod('POST')) {
             $category = new Category();
-            $category->name = Request::get('name');
+            $category->name = $request->input('name');
             $category->slug = str_slug($category->name);
-            $category->icon = Request::get('icon');
-            $category->meta = Request::get('meta');
-            $v = Validator::make($category->toArray(), $category->rules);
+            $category->position = $request->input('position');
+            $category->icon = $request->input('icon');
+            $category->meta = $request->input('meta');
+            $v = validator($category->toArray(), $category->rules);
             if ($v->fails()) {
-                Toastr::error('Something Went Wrong!', 'Error', ['options']);
+                return redirect()->back()->with(Toastr::error('Something Went Wrong!', 'Error', ['options']));
             } else {
                 $category->save();
-                return Redirect::route('staff_category_index')->with(Toastr::info('Category Sucessfully Added', 'Yay!', ['options']));
+                return redirect()->route('staff_category_index')->with(Toastr::success('Category Sucessfully Added', 'Yay!', ['options']));
             }
         }
         return view('Staff.category.add');
@@ -65,20 +62,20 @@ class CategoryController extends Controller
      *
      *
      */
-    public function edit($slug, $id)
+    public function edit(Request $request, $slug, $id)
     {
         $category = Category::findOrFail($id);
-        if (Request::isMethod('post')) {
-            $category->name = Request::get('name');
+        if ($request->isMethod('POST')) {
+            $category->name = $request->input('name');
             $category->slug = str_slug($category->name);
-            $category->icon = Request::get('icon');
-            $category->meta = Request::get('meta');
-            $v = Validator::make($category->toArray(), $category->rules);
+            $category->icon = $request->input('icon');
+            $category->meta = $request->input('meta');
+            $v = validator($category->toArray(), $category->rules);
             if ($v->fails()) {
-                Toastr::error('Something Went Wrong!', 'Error', ['options']);
+                return redirect()->back()->with(Toastr::error('Something Went Wrong!', 'Error', ['options']));
             } else {
                 $category->save();
-                return Redirect::route('staff_category_index')->with(Toastr::info('Category Sucessfully Modified', 'Yay!', ['options']));
+                return redirect()->route('staff_category_index')->with(Toastr::success('Category Sucessfully Modified', 'Yay!', ['options']));
             }
         }
 
@@ -94,6 +91,6 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
         $category->delete();
-        return Redirect::route('staff_category_index')->with(Toastr::warning('Category Sucessfully Deleted', 'Yay!', ['options']));
+        return redirect()->route('staff_category_index')->with(Toastr::success('Category Sucessfully Deleted', 'Yay!', ['options']));
     }
 }

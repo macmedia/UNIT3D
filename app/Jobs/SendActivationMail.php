@@ -6,23 +6,24 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Jobs;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Mail;
 use App\Mail\ActivateUser;
 use App\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
 
 class SendActivationMail implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * @var User
@@ -33,6 +34,13 @@ class SendActivationMail implements ShouldQueue
      * @var string
      */
     public $code;
+
+    /**
+    * The number of times the job may be attempted.
+    *
+    * @var int
+    */
+    public $tries = 3;
 
     /**
      * ActivateUser constructor.
@@ -57,6 +65,6 @@ class SendActivationMail implements ShouldQueue
             $this->delay(min(30 * $this->attempts(), 300));
         }
 
-        Mail::send(new ActivateUser($this->user, $this->code));
+        Mail::to($this->user)->send(new ActivateUser($this->user, $this->code));
     }
 }

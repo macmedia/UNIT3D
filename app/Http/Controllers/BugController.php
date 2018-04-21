@@ -6,19 +6,16 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Http\Controllers;
 
-use App\Group;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use App\User;
 use App\Mail\Bug;
-
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Mail;
-
 use \Toastr;
 
 class BugController extends Controller
@@ -31,17 +28,17 @@ class BugController extends Controller
      * @access public
      * @return view::make bug.bug
      */
-    public function bug()
+    public function bug(Request $request)
     {
         // Fetch owner account
-        $user = User::where('id', '=', '3')->first();
+        $user = User::where('id', 3)->first();
 
-        if (Request::getMethod() == 'POST') {
-            $input = Request::all();
+        if ($request->isMethod('POST')) {
+            $input = $request->all();
 
             Mail::to($user->email, $user->username)->send(new Bug($input));
 
-            Toastr::success('Your Bug Was Succefully Sent!', 'Success', ['options']);
+            Toastr::success('Your Bug Was Succefully Sent!', 'Yay!', ['options']);
         }
         return view('bug.bug');
     }

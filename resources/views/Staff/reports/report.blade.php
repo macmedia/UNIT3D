@@ -1,11 +1,11 @@
 @extends('layout.default')
 
 @section('title')
-<title>Reports - Staff Dashboard - {{ Config::get('other.title') }}</title>
-@stop
+<title>Reports - Staff Dashboard - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
-<meta name="description" content="Reports - Staff Dashboard"> @stop
+<meta name="description" content="Reports - Staff Dashboard"> @endsection
 
 @section('breadcrumb')
 <li>
@@ -23,7 +23,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">Report</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -32,7 +32,7 @@
   @if($report->solved == 0)
   <span class="text-red"><strong><i class="fa fa-times"></i> UNSOLVED </strong></span>
   @else
-  <span class="text-green"><strong><i class="fa fa-check"></i> SOLVED BY <a class="name" href="{{ route('profil', ['username' => $report->staffuser->username, 'id' => $report->staff_id ]) }}">{{ $report->staffuser->username }}</a></strong></span>
+  <span class="text-green"><strong><i class="fa fa-check"></i> SOLVED BY <a class="name" href="{{ route('profile', ['username' => $report->staffuser->username, 'id' => $report->staff_id ]) }}">{{ $report->staffuser->username }}</a></strong></span>
   @endif
   </h2>
     <hr>
@@ -53,13 +53,14 @@
           <textarea name="message" class="form-control" disabled="true">{{ $report->message }}</textarea>
         </div>
       </div>
+    </div>
 
       <h2>Resolve Report</h2>
       <hr>
       <div class="row">
         <div class="col-sm-12">
-					<form class="form-horizontal" role="form" method="POST" action="{{ route('solveReport',['report_id'=>$report->id]) }}">
-						{{ csrf_field() }}
+		<form role="form" method="POST" action="{{ route('solveReport',['report_id'=>$report->id]) }}">
+		{{ csrf_field() }}
           @if($report->solved == 0)
           <div class="form-group">
             <label for="message">Verdict</label>
@@ -72,10 +73,10 @@
           </div>
           @endif
           <button type="submit" class="btn btn-primary">Submit</button>
-				</form>
+		</form>
         </div>
       </div>
     </div>
   </div>
 </div>
-@stop
+@endsection

@@ -2,10 +2,11 @@
 <html lang="{{ config('app.locale') }}">
 <head>
   <meta charset="UTF-8">
-  <title>{{ trans('auth.login') }} - {{ Config::get('other.title') }}</title>
+  <title>{{ trans('auth.login') }} - {{ config('other.title') }}</title>
   <!-- Meta -->
-    <meta name="description" content="{{ trans('auth.login-now-on') }} {{ Config::get('other.title') }} . {{ trans('auth.not-a-member') }}">
-    <meta property="og:title" content="{{ Config::get('other.title') }}">
+    <meta name="description" content="{{ trans('auth.login-now-on') }} {{ config('other.title') }} . {{ trans('auth.not-a-member') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="{{ config('other.title') }}">
     <meta property="og:type" content="website">
     <meta property="og:image" content="{{ url('/img/rlm.png') }}">
     <meta property="og:url" content="{{ url('/') }}">
@@ -26,7 +27,7 @@
       <symbol id="s-text">
         <text text-anchor="middle"
               x="50%" y="50%" dy=".35em">
-          {{ Config::get('other.title') }}
+          {{ config('other.title') }}
         </text>
       </symbol>
 
@@ -43,6 +44,7 @@
            ></use>
 
     </svg>
+
   <div id="formContent">
     <!-- Tabs Titles -->
     <a href="{{ route('login') }}"><h2 class="active">{{ trans('auth.login') }} </h2></a>
@@ -54,7 +56,8 @@
     </div>
 
     <!-- Login Form -->
-    {{ Form::open(array('route' => 'login')) }}
+    <form role="form" method="POST" action="{{ route('login') }}">
+    {{ csrf_field() }}
     <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
         <label for="username" class="col-md-4 control-label">{{ trans('auth.username') }}</label>
 
@@ -93,7 +96,7 @@
         </div>
     </div>
     <button type="submit" class="fadeIn fourth" id="login-button">{{ trans('auth.login') }}</button>
-    {{ Form::close() }}
+    </form>
 
     <!-- Remind Passowrd -->
     <div id="formFooter">

@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-	<title>Invites Log - Staff Dashboard - {{ Config::get('other.title') }}</title>
-@stop
+	<title>Invites Log - Staff Dashboard - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 	<meta name="description" content="Invites Log - Staff Dashboard">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -19,7 +19,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">Invites Log</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -48,7 +48,7 @@
   @foreach($invites as $invite)
     <tr>
       <td>
-         <a class="view-user" data-id="{{ $invite->sender->id }}" data-slug="{{ $invite->sender->username }}" href="{{ route('profil', ['username' =>  $invite->sender->username, 'id' => $invite->sender->id]) }}">{{ $invite->sender->username }}</a>
+         <a class="view-user" data-id="{{ $invite->sender->id }}" data-slug="{{ $invite->sender->username }}" href="{{ route('profile', ['username' =>  $invite->sender->username, 'id' => $invite->sender->id]) }}">{{ $invite->sender->username }}</a>
       </td>
       <td>
         {{ $invite->email }}
@@ -64,7 +64,7 @@
       </td>
       <td>
 				@if($invite->accepted_by != null)
-				<a class="view-user" data-id="{{ $invite->reciever->id }}" data-slug="{{ $invite->reciever->username }}" href="{{ route('profil', ['username' =>  $invite->reciever->username, 'id' => $invite->reciever->id]) }}">{{ $invite->reciever->username }}</a>
+				<a class="view-user" data-id="{{ $invite->reciever->id }}" data-slug="{{ $invite->reciever->username }}" href="{{ route('profile', ['username' =>  $invite->reciever->username, 'id' => $invite->reciever->id]) }}">{{ $invite->reciever->username }}</a>
 				@else
 				N/A
 				@endif
@@ -83,7 +83,7 @@
 </table>
   </div>
 </div>
-{{ $invites->links() }}
+<center>{{ $invites->links() }}</center>
 </div>
 </div>
-@stop
+@endsection

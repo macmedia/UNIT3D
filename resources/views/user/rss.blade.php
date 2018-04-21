@@ -1,8 +1,8 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ $user->username }} - Rss Configuration - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ $user->username }} - Rss Configuration - {{ config('other.title') }}</title>
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -10,7 +10,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">RSS Configuration</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="contrainer">
@@ -27,4 +27,4 @@
 
 
 </div>
-@stop
+@endsection

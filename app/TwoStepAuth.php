@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -79,14 +79,16 @@ class TwoStepAuth extends Model
      *
      * @return array
      */
-    public static function rules($merge=[])
+    public static function rules($merge = [])
     {
-        return array_merge([
+        return array_merge(
+            [
             'userId'     => 'required|integer',
             'authCode'   => 'required|string|max:4|min:4',
             'authCount'  => 'required|integer',
             'authStatus' => 'required|boolean'
-        ],
-        $merge);
+            ],
+            $merge
+        );
     }
 }

@@ -6,18 +6,17 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     Mr.G
  */
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use App\PrivateMessage;
 use App\Warning;
 use App\User;
-
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class revokePermissions extends Command
 {
@@ -43,11 +42,11 @@ class revokePermissions extends Command
     public function handle()
     {
         User::where('group_id', '!=', '5')->where('group_id', '!=', '1')->where('group_id', '!=', '15')->update(['can_download' => '1', 'can_request' => '1']);
-        User::where('group_id', '=', '1')->update(['can_download' => '0', 'can_request' => '0']);
-        User::where('group_id', '=', '5')->update(['can_download' => '0', 'can_request' => '0']);
-        User::where('group_id', '=', '15')->update(['can_download' => '0', 'can_request' => '0']);
+        User::where('group_id', 1)->update(['can_download' => '0', 'can_request' => '0']);
+        User::where('group_id', 5)->update(['can_download' => '0', 'can_request' => '0']);
+        User::where('group_id', 15)->update(['can_download' => '0', 'can_request' => '0']);
 
-        $warning = Warning::with('warneduser')->select(DB::raw('user_id, count(*) as value'))->where('active', '=', '1')->groupBy('user_id')->having('value', '>=', config('hitrun.revoke'))->get();
+        $warning = Warning::with('warneduser')->select(DB::raw('user_id, count(*) as value'))->where('active', 1)->groupBy('user_id')->having('value', '>=', config('hitrun.revoke'))->get();
 
         foreach ($warning as $deny) {
             if ($deny->warneduser->can_download == 1 && $deny->warneduser->can_request == 1) {

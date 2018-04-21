@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('request.add-request') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ trans('request.add-request') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('stylesheets')
 <link rel="stylesheet" href="{{ url('files/wysibb/theme/default/wbbtheme.css') }}">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -19,7 +19,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('request.add-request') }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -43,7 +43,8 @@
       </div>
   </div>
 <h1 class="upload-title">{{ trans('request.add-request') }}</h1>
-{{ Form::open(['route' => 'add_request', 'method' => 'post', 'role' => 'form', 'class' => 'upload-form']) }}
+<form role="form" method="POST" action="{{ route('add_request') }}">
+{{ csrf_field() }}
 <div class="block">
   <div class="upload col-md-12">
             <div class="form-group">
@@ -102,13 +103,13 @@
       </div>
 
       <button type="submit" class="btn btn-primary">{{ trans('common.submit') }}</button>
-      {{ Form::close() }}
+  </form>
     <br>
   </div>
 </div>
 @endif
 </div>
-@stop
+@endsection
 
 @section('javascripts')
 <script type="text/javascript" src="{{ url('files/wysibb/jquery.wysibb.js') }}"></script>
@@ -118,4 +119,4 @@ $(document).ready(function() {
     $("#request-form-description").wysibb(wbbOpt);
 });
 </script>
-@stop
+@endsection

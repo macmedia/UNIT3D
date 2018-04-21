@@ -1,8 +1,8 @@
 @extends('layout.default')
 
 @section('title')
-    <title>Uploads Table - {{ Config::get('other.title') }}</title>
-@stop
+    <title>Uploads Table - {{ config('other.title') }}</title>
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -10,7 +10,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">Uploads Table</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container-fluid">
@@ -21,12 +21,12 @@
         <table class="table table-condensed table-striped table-bordered">
         <div class="head"><strong>Uploaded Torrents</strong></div>
         <thead>
-          <th>@sortablelink('name')</th>
+          <th>@sortablelink('name', trans('torrent.name'))</th>
           <th>Category</th>
-          <th>@sortablelink('size')</th>
-          <th>@sortablelink('seeders')</th>
-          <th>@sortablelink('leechers')</th>
-          <th>@sortablelink('times_completed')</th>
+          <th>@sortablelink('size', trans('torrent.size'))</th>
+          <th>@sortablelink('seeders', trans('torrent.seeders'))</th>
+          <th>@sortablelink('leechers', trans('torrent.leechers'))</th>
+          <th>@sortablelink('times_completed', trans('torrent.completed'))</th>
           <th>Moderation</th>
           <th>Status</th>
       </thead>
@@ -39,7 +39,7 @@
               <a href="{{ route('download', array('slug' => $torrent->slug, 'id' => $torrent->id)) }}">
                 <button class="btn btn-primary btn-circle" type="button"><i class="fa fa-download"></i></button>
               </a>
-              @if(Auth::check() && Auth::user()->id == $user->id && Carbon\Carbon::now()->lt($torrent->created_at->addDay()))
+              @if(auth()->check() && auth()->user()->id == $user->id && Carbon\Carbon::now()->lt($torrent->created_at->addDay()))
               <a class="btn btn-danger btn-xs" href="{{ action('TorrentController@deleteTorrent', array('id' => $torrent->id)) }}" role="button">Delete</a>
               @endif
             </div>
@@ -86,4 +86,4 @@
       {!! $torrents->appends(\Request::except('page'))->render() !!}
   </div>
 </div>
-@stop
+@endsection

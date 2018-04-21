@@ -1,16 +1,16 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ $article->title }} - {{ trans('articles.articles') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ $article->title }} - {{ trans('articles.articles') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('stylesheets')
 <link rel="stylesheet" href="{{ url('files/wysibb/theme/default/wbbtheme.css') }}">
-@stop
+@endsection
 
 @section('meta')
 <meta name="description" content="{{ substr(strip_tags($article->content), 0, 200) }}...">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -23,7 +23,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ $article->title }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="box container">
@@ -43,14 +43,14 @@
     </article>
 
     <div class="col-md-12">
-        {{ Form::open(array('route' => array('comment_article', 'slug' => $article->slug, 'id' => $article->id))) }}
+        <form role="form" method="POST" action="{{ route('comment_article',['slug' => $article->slug, 'id' => $article->id]) }}">
         {{ csrf_field() }}
             <div class="form-group">
                 <label for="content">{{ trans('common.your') }} {{ strtolower(trans('common.comment')) }}:</label><span class="badge-extra">{{ trans('common.type') }} <strong>:</strong> {{ trans('common.for') }} emoji</span> <span class="badge-extra">BBCode {{ trans('common.is-allowed') }}</span>
                 <textarea name="content" id="content" cols="30" rows="5" class="form-control"></textarea>
             </div>
             <button type="submit" class="btn btn-default">{{ trans('common.submit') }}</button>
-        {{ Form::close() }}
+        </form>
         <hr>
     </div>
 
@@ -61,18 +61,18 @@
         <div class="media-body">
         @if($comment->anon == 1)
         <a href="#" class="pull-left">
-        <img src="{{ url('img/profil.png') }}" alt="{{ $comment->user->username }}" class="img-avatar-48"></a>
-        <strong>{{ str_upper(trans('common.anonymous')) }} @if(Auth::user()->group->is_modo)<a href="{{ route('profil', ['username' => $comment->user->username, 'id' => $comment->user->id]) }}">({{ $comment->user->username }})</a>@endif</strong>
+        <img src="{{ url('img/profile.png') }}" alt="{{ $comment->user->username }}" class="img-avatar-48"></a>
+        <strong>{{ str_upper(trans('common.anonymous')) }} @if(auth()->user()->group->is_modo)<a href="{{ route('profile', ['username' => $comment->user->username, 'id' => $comment->user->id]) }}">({{ $comment->user->username }})</a>@endif</strong>
         @else
-        <a href="{{ route('profil', array('username' => $comment->user->username, 'id' => $comment->user->id)) }}" class="pull-left">
+        <a href="{{ route('profile', array('username' => $comment->user->username, 'id' => $comment->user->id)) }}" class="pull-left">
         @if($comment->user->image != null)
         <img src="{{ url('files/img/' . $comment->user->image) }}" alt="{{ $comment->user->username }}" class="img-avatar-48"></a>
         @else
-        <img src="{{ url('img/profil.png') }}" alt="{{ $comment->user->username }}" class="img-avatar-48"></a>
+        <img src="{{ url('img/profile.png') }}" alt="{{ $comment->user->username }}" class="img-avatar-48"></a>
         @endif
-        <strong>By <a href="{{ route('profil', ['username' => $comment->user->username, 'id' => $comment->user->id]) }}">{{ $comment->user->username }}</a></strong> @endif
+        <strong>By <a href="{{ route('profile', ['username' => $comment->user->username, 'id' => $comment->user->id]) }}">{{ $comment->user->username }}</a></strong> @endif
         <span class="text-muted"><small><em>{{$comment->created_at->diffForHumans() }}</em></small></span>
-        @if($comment->user_id == Auth::id() || Auth::user()->group->is_modo)
+        @if($comment->user_id == auth()->user()->id || auth()->user()->group->is_modo)
         <a title="{{ trans('common.delete') }}" href="{{route('comment_delete',['comment_id'=>$comment->id])}}"><i class="pull-right fa fa-lg fa-times" aria-hidden="true"></i></a>
         <a title="{{ trans('common.edit') }}" data-toggle="modal" data-target="#modal-comment-edit-{{ $comment->id }}"><i class="pull-right fa fa-lg fa-pencil" aria-hidden="true"></i></a>
         @endif
@@ -86,7 +86,7 @@
       </ul>
     </div>
 </div>
-@stop
+@endsection
 
 @section('javascripts')
 <script type="text/javascript" src="{{ url('files/wysibb/jquery.wysibb.js') }}"></script>
@@ -96,4 +96,4 @@ $(document).ready(function() {
     $("#content").wysibb(wbbOpt);
 });
 </script>
-@stop
+@endsection

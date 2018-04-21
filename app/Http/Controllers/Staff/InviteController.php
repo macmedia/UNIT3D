@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -24,7 +24,7 @@ class InviteController extends Controller
      */
     public function getInvites()
     {
-        $invites = Invite::orderBy('created_at', 'DESC')->paginate(50);
+        $invites = Invite::latest()->paginate(25);
         $invitecount = Invite::count();
 
         return view('Staff.invites.index', ['invites' => $invites, 'invitecount' => $invitecount]);

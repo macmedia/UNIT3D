@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -21,7 +21,7 @@ return [
     |
     */
 
-    'fanart' => '',
+    'fanart' => env('FANART_API_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ return [
     |
     */
 
-    'tmdb' => '',
+    'tmdb' => env('TMDB_API_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -43,7 +43,7 @@ return [
     |
     */
 
-    'tvdb' => '',
+    'tvdb' => env('TVDB_API_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,5 +54,5 @@ return [
     |
     */
 
-    'omdb' => '',
+    'omdb' => env('OMDB_API_KEY', ''),
 ];

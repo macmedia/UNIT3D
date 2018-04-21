@@ -1,16 +1,16 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('common.edit') }} {{ trans('forum.post') }} - {{ $topic->name }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ trans('common.edit') }} {{ trans('forum.post') }} - {{ $topic->name }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 <meta name="description" content="{{ $forum->name . ' - ' . trans('forum.edit-post') }}">
-@stop
+@endsection
 
 @section('stylesheets')
 <link rel="stylesheet" href="{{ url('files/wysibb/theme/default/wbbtheme.css') }}">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -38,7 +38,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('common.edit') }} {{ trans('forum.post') }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="forum box container">
@@ -50,20 +50,17 @@
 
 	<div class="col-md-12">
 		<h2>{{ trans('common.edit') }} {{ trans('forum.post') }} {{ strtolower(trans('forum.in')) }}: {{ $forum->name }}</h2>
-		{{ Form::open(array('route' => array('forum_post_edit', 'slug' => $topic->slug, 'id' => $topic->id, 'postId' => $post->id))) }}
-		{{ csrf_field() }}
-
+        <form role="form" method="POST" action="{{ route('forum_post_edit',['slug' => $topic->slug, 'id' => $topic->id, 'postId' => $post->id]) }}">
+        {{ csrf_field() }}
 			<div class="form-group">
 				<textarea id="content" name="content" cols="30" rows="10" class="form-control">{{ $post->content }}</textarea>
 			</div>
-
-
 			<button type="submit" name="post" value="true" class="btn btn-primary">{{ trans('common.submit') }}</button>
 			<button type="submit" name="preview" value="true" class="btn btn-default">{{ trans('common.preview') }}</button>
-		{{ Form::close() }}
+		</form>
 	</div>
 </div>
-@stop
+@endsection
 
 @section('javascripts')
 <script type="text/javascript" src="{{ url('files/wysibb/jquery.wysibb.js') }}"></script>
@@ -73,4 +70,4 @@ $(document).ready(function() {
     $("#content").wysibb();
 });
 </script>
-@stop
+@endsection

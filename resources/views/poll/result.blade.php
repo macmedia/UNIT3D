@@ -1,8 +1,8 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('poll.results') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ trans('poll.results') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -20,7 +20,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('poll.results') }}</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -34,10 +34,14 @@
         </div>
         <div class="panel-body">
           @foreach ($poll->options as $option)
+          @php
+            $vote_value = $total_votes !== 0 ? ($option->votes / $total_votes) * 100 : 0;
+            $vote_value = round($vote_value, 2);
+          @endphp
           <strong>{{ $option->name }}</strong><span class="pull-right">{{ $option->votes }} {{ trans('poll.votes') }}</span>
           <div class="progress">
-            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{ $option->votes }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $option->votes }}%;">
-              {{ $option->votes }}
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{ $vote_value }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $vote_value }}%;">
+              {{ $vote_value }}%
             </div>
           </div>
           @endforeach

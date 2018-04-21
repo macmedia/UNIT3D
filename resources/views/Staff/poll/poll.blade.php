@@ -1,8 +1,8 @@
 @extends('layout.default')
 
 @section('title')
-<title>Poll Results - {{ Config::get('other.title') }}</title>
-@stop
+<title>Poll Results - {{ config('other.title') }}</title>
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -15,7 +15,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">Poll Results</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">

@@ -6,13 +6,11 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Http\Controllers;
-
-use Illuminate\Support\Facades\Auth;
 
 class AchievementsController extends Controller
 {
@@ -25,7 +23,7 @@ class AchievementsController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $achievements = $user->unlockedAchievements();
         $locked = $user->lockedAchievements();
         $pending = $user->inProgressAchievements();

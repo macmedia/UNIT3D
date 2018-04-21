@@ -6,21 +6,17 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Command;
 use App\Shoutbox;
 use App\FeaturedTorrent;
 use App\Torrent;
-
 use Carbon\Carbon;
-use Cache;
-
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class removeFeaturedTorrent extends Command
 {
@@ -50,7 +46,7 @@ class removeFeaturedTorrent extends Command
 
         foreach ($featured_torrents as $featured_torrent) {
             // Find The Torrent
-            $torrent = Torrent::where('featured', '=', 1)->where('id', '=', $featured_torrent->torrent_id)->first();
+            $torrent = Torrent::where('featured', 1)->where('id', $featured_torrent->torrent_id)->first();
             $torrent->free = 0;
             $torrent->doubleup = 0;
             $torrent->featured = 0;
@@ -59,7 +55,7 @@ class removeFeaturedTorrent extends Command
             // Auto Announce Featured Expired
             $appurl = config('app.url');
             Shoutbox::create(['user' => "1", 'mentions' => "1", 'message' => "Ladies and Gents, [url={$appurl}/torrents/" . $torrent->slug . "." . $torrent->id . "]" . $torrent->name . "[/url] is no longer featured. :poop:"]);
-            Cache::forget('shoutbox_messages');
+            cache()->forget('shoutbox_messages');
 
             // Delete The Record From DB
             $featured_torrent->delete();

@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-	<title>User Search Results - Staff Dashboard - {{ Config::get('other.title') }}</title>
-@stop
+	<title>User Search Results - Staff Dashboard - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 	<meta name="description" content="User Search Results - Staff Dashboard">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -24,7 +24,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">User Search Results</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -50,10 +50,10 @@
                   <td class="user-image hidden-xs hidden-sm">
                     @if($user->image != null)
                     <img src="{{ url('files/img/' . $user->image) }}" alt="{{ $user->username }}" class="img-circle"> @else
-                    <img src="{{ url('img/profil.png') }}" alt="{{ $user->username }}" class="img-circle"> @endif
+                    <img src="{{ url('img/profile.png') }}" alt="{{ $user->username }}" class="img-circle"> @endif
                   </td>
-                  <td class="user-name"> <a href="{{ route('profil', ['username' => $user->username, 'id' => $user->id]) }}" class="name">{{ $user->username }}</a> <span>{{ $user->group->name }}</span> </td>
-                  @if(Auth::user()->group->is_modo)
+                  <td class="user-name"> <a href="{{ route('profile', ['username' => $user->username, 'id' => $user->id]) }}" class="name">{{ $user->username }}</a> <span>{{ $user->group->name }}</span> </td>
+                  @if(auth()->user()->group->is_modo)
                   <td class="hidden-xs hidden-sm"> <span class="email">{{ $user->email }}</span> </td>
                   <td class="user-id">
                     {{ $user->id }}
@@ -81,4 +81,4 @@
     </div>
   </div>
 </div>
-@stop
+@endsection

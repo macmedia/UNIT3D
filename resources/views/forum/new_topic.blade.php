@@ -1,16 +1,16 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('forum.create-new-topic') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ trans('forum.create-new-topic') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 <meta name="description" content="{{ $forum->name . ' - ' . trans('forum.create-new-topic') }}">
-@stop
+@endsection
 
 @section('stylesheets')
 <link rel="stylesheet" href="{{ url('files/wysibb/theme/default/wbbtheme.css') }}">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -28,7 +28,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('forum.create-new-topic') }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="forum box container">
@@ -38,7 +38,7 @@
 
 	<div class="col-md-12">
 		<h2><span>{{ trans('forum.create-new-topic') }}</span><span id="thread-title">{{ $title }}</span></h2>
-		{{ Form::open(array('route' => array('forum_new_topic', 'slug' => $forum->slug, 'id' => $forum->id))) }}
+        <form role="form" method="POST" action="{{ route('forum_new_topic',['slug' => $forum->slug, 'id' => $forum->id]) }}">
         {{ csrf_field() }}
 			<div class="form-group">
 				<input id="input-thread-title" type="text" name="title" maxlength="75" class="form-control" placeholder="{{ trans('forum.topic-title') }}" value="{{ $title }}">
@@ -50,10 +50,10 @@
 
 			<button type="submit" name="post" value="true" id="post" class="btn btn-primary">{{ trans('forum.send-new-topic') }}</button>
 			<button type="submit" name="preview" value="true" id="preview" class="btn btn-default">{{ trans('common.preview') }}</button>
-		{{ Form::close() }}
+		</form>
 	</div>
 </div>
-@stop
+@endsection
 
 @section('javascripts')
 <script type="text/javascript" src="{{ url('files/wysibb/jquery.wysibb.js') }}"></script>
@@ -70,4 +70,4 @@ $(document).ready(function() {
     var wysibb = $("#new-thread-content").wysibb();
 });
 </script>
-@stop
+@endsection

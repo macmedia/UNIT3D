@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ $forum->name }} - {{ trans('forum.forums') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ $forum->name }} - {{ trans('forum.forums') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 <meta name="description" content="{{ trans('forum.display-forum') . $forum->name }}">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -19,7 +19,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ $forum->name }}</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container box">
@@ -62,13 +62,13 @@
                             @if($t->suggestion == "1") <span class='label label-sm label-primary'>{{ strtoupper(trans('forum.suggestion')) }}</span> @endif
                             @if($t->implemented == "1") <span class='label label-sm label-success'>{{ strtoupper(trans('forum.implemented')) }}</span> @endif
                         </td>
-                        <td class="f-display-topic-started"><a href="{{ route('profil', ['username' => $t->first_post_user_username, 'id' => $t->first_post_user_id]) }}">{{ $t->first_post_user_username }}</a></td>
+                        <td class="f-display-topic-started"><a href="{{ route('profile', ['username' => $t->first_post_user_username, 'id' => $t->first_post_user_id]) }}">{{ $t->first_post_user_username }}</a></td>
                         <td class="f-display-topic-stats">
                             {{ $t->num_post - 1 }} {{ trans('forum.replies') }} \ {{ $t->views }} {{ trans('forum.views') }}
                         </td>
                         @php $last_post = DB::table('posts')->where('topic_id', '=', $t->id)->orderBy('id', 'desc')->first(); @endphp
                         <td class="f-display-topic-last-post">
-                            <a href="{{ route('profil', ['username' => $t->last_post_user_username, 'id' => $t->last_post_user_id]) }}">{{ $t->last_post_user_username }}</a> on <time datetime="{{ date('M d Y', strtotime($last_post->created_at)) }}">
+                            <a href="{{ route('profile', ['username' => $t->last_post_user_username, 'id' => $t->last_post_user_id]) }}">{{ $t->last_post_user_username }}</a> on <time datetime="{{ date('M d Y', strtotime($last_post->created_at)) }}">
                                 {{ date('M d Y', strtotime($last_post->created_at)) }}
                              </time>
                         </td>
@@ -82,4 +82,4 @@
         </div>
     </div>
 </div>
-@stop
+@endsection

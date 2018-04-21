@@ -6,21 +6,18 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Console\Commands;
 
-use App\Torrent;
+use Illuminate\Console\Command;
 use App\History;
 use App\PrivateMessage;
 use App\User;
 use App\Warning;
 use Carbon\Carbon;
-
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class autoPreWarning extends Command
 {
@@ -49,7 +46,7 @@ class autoPreWarning extends Command
             $current = new Carbon();
             $prewarn = History::with(['user', 'torrent'])
                             ->where('actual_downloaded', '>', 0)
-                            ->where('active', '=', 0)
+                            ->where('active', 0)
                             ->where('seedtime', '<=', config('hitrun.seedtime'))
                             ->where('updated_at', '<', $current->copy()->subDays(config('hitrun.prewarn'))->toDateTimeString())
                             ->get();
@@ -57,7 +54,7 @@ class autoPreWarning extends Command
             foreach ($prewarn as $pre) {
                 if (!$pre->user->group->is_immune) {
                     if ($pre->actual_downloaded > ($pre->torrent->size * (config('hitrun.buffer') / 100))) {
-                        $exsist = Warning::where('torrent', '=', $pre->torrent->id)->where('user_id', '=', $pre->user->id)->first();
+                        $exsist = Warning::where('torrent', $pre->torrent->id)->where('user_id', $pre->user->id)->first();
 
                         // Send Pre Warning PM If Actual Warning Doesnt Already Exsist
                         if (!$exsist) {

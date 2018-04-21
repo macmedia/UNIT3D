@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-	<title>{{ trans('backup.backup') }} {{ trans('backup.manager') }} - Staff Dashboard - {{ Config::get('other.title') }}</title>
-@stop
+	<title>{{ trans('backup.backup') }} {{ trans('backup.manager') }} - Staff Dashboard - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 	<meta name="description" content="{{ trans('backup.backup') }} {{ trans('backup.manager') }} - Staff Dashboard">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -19,7 +19,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('backup.backup') }} {{ trans('backup.manager') }}</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
   <div class="container box">

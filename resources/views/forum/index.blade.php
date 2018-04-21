@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ trans('forum.forums') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ trans('forum.forums') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
-<meta name="description" content="{{ Config::get('other.title') }} - {{ trans('forum.forums') }}">
-@stop
+<meta name="description" content="{{ config('other.title') }} - {{ trans('forum.forums') }}">
+@endsection
 
 
 @section('breadcrumb')
@@ -15,14 +15,15 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">{{ trans('forum.forums') }}</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="box container">
 <span class="badge-user" style="float: right;"><strong>{{ trans('forum.forums') }}:</strong> {{ $num_forums }} | <strong>{{ trans('forum.topics') }}:</strong> {{ $num_topics }} | <strong>{{ trans('forum.posts') }}:</strong> {{ $num_posts }}</span>
-{{ Form::open(array('route' => 'forum_search')) }}
+<form role="form" method="POST" action="{{ route('forum_search') }}">
+{{ csrf_field() }}
 <input type="text" name="name" id="name" placeholder="{{ trans('forum.topic-quick-search') }}" class="form-control">
-{{ Form::close() }}
+</form>
 	<div class="forum-categories">
 		@foreach($categories as $category)
 			@if($category->getPermission() != null && $category->getPermission()->show_forum == true && $category->getForumsInCategory()->count() > 0)
@@ -53,7 +54,7 @@
             <td>{{ $categoryChild->num_post }}</td>
             <td>{{ $categoryChild->num_topic }}</td>
             <td>
-              <span>{{ trans('forum.last-message') }} - {{ strtolower(trans('forum.author')) }} <i class="fa fa-user"></i> <a href="{{ route('profil', ['username' => $categoryChild->last_post_user_username, 'id' => $categoryChild->last_post_user_id]) }}"> {{ $categoryChild->last_post_user_username }}</a></span>
+              <span>{{ trans('forum.last-message') }} - {{ strtolower(trans('forum.author')) }} <i class="fa fa-user"></i> <a href="{{ route('profile', ['username' => $categoryChild->last_post_user_username, 'id' => $categoryChild->last_post_user_id]) }}"> {{ $categoryChild->last_post_user_username }}</a></span>
               <br>
               <span>{{ trans('forum.topic') }} <i class="fa fa-chevron-right"></i><a href="{{ route('forum_topic', array('slug' => $categoryChild->last_topic_slug, 'id' => $categoryChild->last_topic_id)) }}"> {{ $categoryChild->last_topic_name }}</a></span>
               <br>
@@ -67,4 +68,4 @@
 		@endforeach
 	</div>
 </div>
-@stop
+@endsection

@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-<title>{{ $user->username }} - {{ trans('common.members') }} - {{ Config::get('other.title') }}</title>
-@stop
+<title>{{ $user->username }} - {{ trans('common.members') }} - {{ config('other.title') }}</title>
+@endsection
 
 @section('breadcrumb')
 <li>
-    <a href="{{ route('profil', ['username' => $user->username, 'id' => $user->id]) }}" itemprop="url" class="l-breadcrumb-item-link">
+    <a href="{{ route('profile', ['username' => $user->username, 'id' => $user->id]) }}" itemprop="url" class="l-breadcrumb-item-link">
         <span itemprop="title" class="l-breadcrumb-item-link-title">{{ $user->username }}</span>
     </a>
 </li>
@@ -15,7 +15,7 @@
         <span itemprop="title" class="l-breadcrumb-item-link-title">Settings</span>
     </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -31,7 +31,29 @@
     <div role="tabpanel" class="tab-pane active" id="welcome">
 
         {{ Form::open(array('url' => '/{username}.{id}/settings','role' => 'form', 'class' => 'login-frm')) }}
-        <h3>Style Settings</h3>
+        <br>
+        <h2>General Settings</h2>
+        <hr>
+        <label for="hidden" class="control-label">Language Censor Chat?</label>
+        <div class="radio-inline">
+            <label><input type="radio" name="censor" @if($user->censor == 1) checked @endif value="1">YES</label>
+          </div>
+        <div class="radio-inline">
+            <label><input type="radio" name="censor" @if($user->censor == 0) checked @endif value="0">NO</label>
+        </div>
+        <br>
+        <br>
+        <label for="hidden" class="control-label">Hide Chat?</label>
+        <div class="radio-inline">
+            <label><input type="radio" name="chat_hidden" @if($user->chat_hidden == 1) checked @endif value="1">YES</label>
+          </div>
+        <div class="radio-inline">
+            <label><input type="radio" name="chat_hidden" @if($user->chat_hidden == 0) checked @endif value="0">NO</label>
+        </div>
+        <br>
+        <br>
+
+        <h2>Style Settings</h2>
         <hr>
         <div class="form-group">
           <label for="theme" class="control-label">Theme</label>
@@ -56,7 +78,7 @@
         <br>
         <br>
 
-        <h3>Privacy Settings</h3>
+        <h2>Privacy Settings</h2>
         <hr>
         <label for="hidden" class="control-label">Hidden From Online Block?</label>
         <div class="radio-inline">
@@ -86,7 +108,7 @@
         <br>
         <br>
 
-        <h3>Torrent Preferences</h3>
+        <h2>Torrent Preferences</h2>
         <hr>
         <label for="poster" class="control-label">Show Posters On Torrent List View?</label>
         <div class="radio-inline">
@@ -107,7 +129,7 @@
         <br>
         <br>
 
-        <h3>Security Preferences</h3>
+        <h2>Security Preferences</h2>
         <hr>
         @if(config('auth.TwoStepEnabled') == true)
         <label for="twostep" class="control-label">Use Two Step Auth?</label>
@@ -176,4 +198,4 @@
     </div>
   </div>
 </div>
-@stop
+@endsection

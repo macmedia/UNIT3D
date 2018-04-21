@@ -6,15 +6,13 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
-
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\User;
@@ -22,7 +20,6 @@ use App\Poll;
 use App\Option;
 use App\Shoutbox;
 use App\Http\Requests\StorePoll;
-
 use Cache;
 use \Toastr;
 
@@ -30,7 +27,7 @@ class PollController extends Controller
 {
     public function polls()
     {
-        $polls = Poll::orderBy('created_at', 'desc')->paginate(20);
+        $polls = Poll::latest()->paginate(25);
         return view('Staff.poll.polls', compact('polls'));
     }
 
@@ -58,8 +55,10 @@ class PollController extends Controller
      */
     public function store(StorePoll $request)
     {
-        if (\Auth::check()) {
-            $poll = \Auth::user()->polls()->create($request->all());
+        $user = auth()->user();
+
+        if (auth()->check()) {
+            $poll = $user->polls()->create($request->all());
         } else {
             $poll = Poll::create($request->all());
         }
@@ -70,49 +69,13 @@ class PollController extends Controller
         $poll->options()->saveMany($options);
 
         // Activity Log
-        \LogActivity::addToLog("Staff Member " . Auth::user()->username . " has created a new poll " . $poll->title . " .");
+        \LogActivity::addToLog("Staff Member {$user->username} has created a new poll {$poll->title}.");
 
         // Auto Shout
         $appurl = config('app.url');
-        Shoutbox::create(['user' => "1", 'mentions' => "1", 'message' => "A new poll has been created [url={$appurl}/poll/" . $poll->slug . "]" . $poll->title . "[/url] vote on it now! :slight_smile:"]);
+        Shoutbox::create(['user' => "1", 'mentions' => "1", 'message' => "A new poll has been created [url={$appurl}/poll/{$poll->slug}]{$poll->title}[/url] vote on it now! :slight_smile:"]);
         Cache::forget('shoutbox_messages');
 
-        Toastr::success('Your poll has been created.', 'Yay!', ['options']);
-
-        return redirect('poll/' . $poll->slug);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return redirect('poll/' . $poll->slug)->with(Toastr::success('Your poll has been created.', 'Yay!', ['options']));
     }
 }

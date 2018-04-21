@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -32,6 +32,7 @@ class CategoriesTableSeeder extends Seeder
                     'id' => 1,
                     'name' => 'Movies',
                     'slug' => 'movies',
+                    'position' => 0,
                     'icon' => 'fa fa-film',
                     'num_torrent' => 0,
                     'meta' => 1,
@@ -41,6 +42,7 @@ class CategoriesTableSeeder extends Seeder
                     'id' => 2,
                     'name' => 'TV',
                     'slug' => 'tv',
+                    'position' => 1,
                     'icon' => 'fa fa-television',
                     'num_torrent' => 0,
                     'meta' => 1,
@@ -50,6 +52,7 @@ class CategoriesTableSeeder extends Seeder
                     'id' => 3,
                     'name' => 'Music',
                     'slug' => 'music',
+                    'position' => 2,
                     'icon' => 'fa fa-music',
                     'num_torrent' => 0,
                     'meta' => 0,

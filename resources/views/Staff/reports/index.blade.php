@@ -1,12 +1,12 @@
 @extends('layout.default')
 
 @section('title')
-	<title>Reports - Staff Dashboard - {{ Config::get('other.title') }}</title>
-@stop
+	<title>Reports - Staff Dashboard - {{ config('other.title') }}</title>
+@endsection
 
 @section('meta')
 	<meta name="description" content="Reports - Staff Dashboard">
-@stop
+@endsection
 
 @section('breadcrumb')
 <li>
@@ -19,7 +19,7 @@
     <span itemprop="title" class="l-breadcrumb-item-link-title">Reports</span>
   </a>
 </li>
-@stop
+@endsection
 
 @section('content')
 <div class="container">
@@ -56,10 +56,10 @@
             <a href="{{ route('getReport',['report_id'=>$r->id]) }}">{{ $r->title }}</a>
           </td>
           <td class="user-name">
-            <a class="name" href="{{ route('profil', ['username' => $r->reportuser->username, 'id' => $r->reporter_id ]) }}">{{ $r->reportuser->username }}</a>
+            <a class="name" href="{{ route('profile', ['username' => $r->reportuser->username, 'id' => $r->reporter_id ]) }}">{{ $r->reportuser->username }}</a>
           </td>
           <td class="user-name">
-            <a class="name" href="{{ $r->staff_id ? route('profil', ['username' => $r->staffuser->username, 'id' => $r->staff_id ]) : route('home')}}">{{ $r->staff_id ? $r->staffuser->username : "" }}</a>
+            <a class="name" href="{{ $r->staff_id ? route('profile', ['username' => $r->staffuser->username, 'id' => $r->staff_id ]) : route('home')}}">{{ $r->staff_id ? $r->staffuser->username : "" }}</a>
           </td>
           <td>
 						@if($r->solved == 0)
@@ -75,6 +75,7 @@
     </table>
   </div>
 </div>
+<center>{{ $reports->links() }}</center>
 </div>
 </div>
-@stop
+@endsection

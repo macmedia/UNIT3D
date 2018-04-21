@@ -6,7 +6,7 @@
  * The details is bundled with this project in the file LICENSE.txt.
  *
  * @project    UNIT3D
- * @license    https://choosealicense.com/licenses/gpl-3.0/  GNU General Public License v3.0
+ * @license    https://www.gnu.org/licenses/agpl-3.0.en.html/ GNU Affero General Public License v3.0
  * @author     HDVinnie
  */
 
@@ -21,7 +21,7 @@ return [
     |
     */
 
-    'codebase' => '"UNIT3D" Nex-Gen Torrent Tracker (BETA) v1.0',
+    'codebase' => '"UNIT3D" Nex-Gen Torrent Tracker v1.6.5',
 
     /*
     |--------------------------------------------------------------------------
@@ -126,9 +126,11 @@ return [
     |--------------------------------------------------------------------------
     |
     | Invite System On/Off (Open Reg / Closed)
+    | Expire time in days
     |
     */
     'invite-only' => true,
+    'invite_expire' => '14',
 
     /*
     |--------------------------------------------------------------------------
@@ -150,4 +152,8 @@ return [
     */
     'default_upload' => '53687091200',
     'default_download' => '1073741824',
+    'default_style' => 0,
+
+    'invites_restriced' => false,
+    'invite_groups' => [],
 ];
