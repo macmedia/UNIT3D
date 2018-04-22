@@ -33,10 +33,10 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\UpdateLastLogin::class,
         ],
         'App\Events\MaintenanceModeEnabled' => [
-            App\Listeners\UpdateStatusPageMaintenanceStarted::class,
+            \App\Listeners\LogMaintenanceStarted::class,
         ],
         'App\Events\MaintenanceModeDisabled' => [
-            App\Listeners\UpdateStatusPageMaintenanceEnded::class,
+            \App\Listeners\LogMaintenanceEnded::class,
         ],
     ];
 

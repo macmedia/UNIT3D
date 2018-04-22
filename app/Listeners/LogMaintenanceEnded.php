@@ -13,6 +13,7 @@
 namespace App\Listeners;
 
 use App\Events\MaintenanceModeDisabled;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class LogMaintenanceEnded
@@ -25,6 +26,6 @@ class LogMaintenanceEnded
     public function handle(MaintenanceModeDisabled $maintenanceMode)
     {
         $startingTime = $maintenanceMode->time;
-        notice("Maintenance Mode Disabled, total downtime was " . Carbon::now()->diffForHumans($startingTime, true, true, 6));
+        Log::notice("Maintenance Mode Disabled, total downtime was " . Carbon::now()->diffForHumans($startingTime, true, true, 6));
     }
 }

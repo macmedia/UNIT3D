@@ -13,6 +13,7 @@
 namespace App\Listeners;
 
 use App\Events\MaintenanceModeEnabled;
+use Illuminate\Support\Facades\Log;
 
 class LogMaintenanceStarted
 {
@@ -28,6 +29,6 @@ class LogMaintenanceStarted
         {
             $logMessage .= " with a custom message: \"" . $maintenanceMode->message . "\"";
         }
-        notice($logMessage);
+        Log::notice($logMessage);
     }
 }
