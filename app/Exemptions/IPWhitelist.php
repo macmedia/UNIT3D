@@ -27,11 +27,11 @@ class IPWhitelist extends MaintenanceModeExemption
      *
      * @return bool
      */
-    public function isExempt(Request $request)
+    public function isExempt()
     {
         $authorizedIPs = config('maintenancemode.exempt-ips', []);
         $useProxy = config('maintenancemode.exempt-ips-proxy', false);
-        $userIP = $request->getClientIp($useProxy);
+        $userIP = $this->app['request']->getClientIp($useProxy);
 
         if(is_array($authorizedIPs) && in_array($userIP, $authorizedIPs))
         {
