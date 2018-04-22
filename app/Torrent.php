@@ -230,4 +230,13 @@ class Torrent extends Model
         $pfree = $user ? $user->group->is_freeleech || PersonalFreeleech::where('user_id', '=', $user->id)->first() : false;
         return $this->free || config('other.freeleech') || $pfree;
     }
+
+    /**
+     * Has many reviews
+     *
+     */
+    public function reviews()
+    {
+        return $this->hasMany(\App\Review::class);
+    }
 }

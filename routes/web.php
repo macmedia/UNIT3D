@@ -266,6 +266,12 @@ Route::group(['middleware' => 'language'], function () {
         Route::any('/notification/massread', 'NotificationController@massRead')->name('massRead_notifications');
         Route::any('/notification/delete/{id}', 'NotificationController@delete')->name('delete_notification');
         Route::any('/notification/delete', 'NotificationController@deleteAll')->name('delete_notifications');
+
+        // Review System
+        Route::get('/review/create', 'ReviewController@create')->name('review');
+        Route::post('/review/store', 'ReviewController@store')->name('storeReview');
+        Route::post('/review/update', 'ReviewController@update')->name('updateReview');
+        Route::post('/review/destroy', 'ReviewController@destroy')->name('destroyReview');
     });
 
     /*
