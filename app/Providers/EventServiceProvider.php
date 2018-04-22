@@ -32,6 +32,12 @@ class EventServiceProvider extends ServiceProvider
         'Illuminate\Auth\Events\Login' => [
             \App\Listeners\UpdateLastLogin::class,
         ],
+        'App\Events\MaintenanceModeEnabled' => [
+            App\Listeners\UpdateStatusPageMaintenanceStarted::class,
+        ],
+        'App\Events\MaintenanceModeDisabled' => [
+            App\Listeners\UpdateStatusPageMaintenanceEnded::class,
+        ],
     ];
 
     /**
