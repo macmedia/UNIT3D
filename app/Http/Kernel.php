@@ -15,11 +15,14 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         //Default Laravel
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        //\Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
+
+        //Custom Maintenance Mode
+        \App\Http\Middleware\CheckForMaintenanceMode::class,
 
         //Secure Headers
         \Bepsvpt\SecureHeaders\SecureHeadersMiddleware::class,
