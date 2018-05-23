@@ -10,29 +10,29 @@
  * @author     HDVinnie
  */
 
-namespace App;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Category extends Model
+class RenameBanTable extends Migration
 {
-    public $timestamps = false;
-
     /**
-     * Has many torrents
+     * Run the migrations.
      *
+     * @return void
      */
-    public function torrents()
+    public function up()
     {
-        return $this->hasMany(Torrent::class);
+        Schema::rename('ban', 'bans');
     }
 
     /**
-     * Has many requests
+     * Reverse the migrations.
      *
+     * @return void
      */
-    public function requests()
+    public function down()
     {
-        return $this->hasMany(TorrentRequest::class);
+        Schema::rename('ban', 'bans');
     }
 }
